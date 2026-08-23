@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WorkTree.API.UseCases.Tenants.Create;
 using WorkTree.API.UseCases.Tenants.Delete;
+using WorkTree.API.UseCases.Tenants.GetById;
 using WorkTree.API.UseCases.Tenants.Update;
 using WorkTree.Communication.Requests;
 using WorkTree.Communication.Requests.Tenants;
@@ -49,27 +50,14 @@ public class TenantsController : Controller
         return Ok();
     }
 
-    /*[HttpGet]
-    [Route("{userId}")]
-    [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status200OK)]
+    [HttpGet]
+    [Route("{tenantId}")]
+    [ProducesResponseType(typeof(ResponseTenantJson), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
-    public IActionResult GetById([FromRoute] Guid userId, [FromServices] GetUserByIdUseCase useCase)
+    public IActionResult GetById([FromRoute] Guid tenantId, [FromServices] GetTenantByIdUseCase useCase)
     {
-        var response = useCase.Execute(userId);
+        var response = useCase.Execute(tenantId);
 
         return Ok(response);
-    }*/
-
-    /*[HttpGet]
-    [ProducesResponseType(typeof(List<ResponseUserJson>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status204NoContent)]
-    public IActionResult GetAll([FromServices] GetAllUsersUseCase useCase)
-    {
-        var users = useCase.Execute();
-
-        if (users.Count == 0)
-            return NoContent();
-
-        return Ok(users);
-    }*/
+    }
 }
