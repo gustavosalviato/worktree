@@ -52,7 +52,7 @@ public class TokenService : ITokenService
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
-        
+
         var credentials = new SigningCredentials(new SymmetricSecurityKey(_key), SecurityAlgorithms.HmacSha256);
         var expires = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpirationDays"] ?? "30"));
 
@@ -66,5 +66,22 @@ public class TokenService : ITokenService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public async Task<(bool isValid, string? subId)> ValidateTokenAsync(string token)
+    {
+        var tokenParameters = TokenHelper.BuildTokenValidationParameters(_config);
+        var validTokenResult = await new JwtSecurityTokenHandler().ValidateTokenAsync(token, tokenParameters);
+
+        if (!validTokenResult.IsValid)
+            return (false, null);
+
+
+        if (!validTokenResult.Claims.TryGetValue(ClaimTypes.NameIdentifier, out var subId))
+        {
+            return (false, null);
+        }
+
+        return (true, subId.ToString());
     }
 }

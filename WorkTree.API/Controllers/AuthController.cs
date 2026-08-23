@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WorkTree.API.UseCases.Session.Authenticate;
+using WorkTree.API.UseCases.Session.RefreshToken;
 using WorkTree.Communication.Requests.Auth;
 using WorkTree.Communication.Responses;
 using WorkTree.Communication.Responses.Auth;
@@ -19,6 +20,21 @@ public class AuthController : Controller
         [FromServices] AuthenticaUseUseCase useCase)
     {
         var response = useCase.Execute(request);
+
+        return Created(string.Empty, response);
+    }
+
+
+    [HttpPost]
+    [Route("refresh-token")]
+    [ProducesResponseType(typeof(ResponseRefreshTokenJson), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> RefreshToken([FromBody] RequestRefreshTokenJson request,
+        [FromServices] RefreshTokenUseCase useCase)
+    {
+        var response = await useCase.Execute(request);
 
         return Created(string.Empty, response);
     }
