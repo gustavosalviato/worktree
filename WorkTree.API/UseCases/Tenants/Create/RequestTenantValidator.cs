@@ -1,7 +1,7 @@
 using FluentValidation;
-using WorkTree.Communication.Requests;
+using WorkTree.Communication.Requests.Tenants;
 
-namespace WorkTree.API.UseCases.Tenant.Create;
+namespace WorkTree.API.UseCases.Tenants.Create;
 
 public class RequestTenantValidator : AbstractValidator<RequestTenantJson>
 {

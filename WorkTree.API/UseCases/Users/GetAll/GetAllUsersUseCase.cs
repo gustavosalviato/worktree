@@ -1,5 +1,5 @@
 using WorkTree.API.Contracts;
-using WorkTree.Communication.Responses.User;
+using WorkTree.Communication.Responses.Users;
 
 namespace WorkTree.API.UseCases.Users.GetAll;
 

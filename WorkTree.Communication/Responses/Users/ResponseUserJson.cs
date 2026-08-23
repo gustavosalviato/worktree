@@ -1,4 +1,4 @@
-namespace WorkTree.Communication.Responses.User;
+namespace WorkTree.Communication.Responses.Users;
 
 public class ResponseUserJson
 {

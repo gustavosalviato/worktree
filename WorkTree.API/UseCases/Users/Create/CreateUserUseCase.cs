@@ -1,9 +1,10 @@
 using WorkTree.Communication.Requests;
-using WorkTree.Communication.Responses.User;
 using WorkTree.Exceptions.ExceptionsBase;
 using Microsoft.AspNetCore.Identity;
 using WorkTree.API.Contracts;
 using WorkTree.API.Entities;
+using WorkTree.Communication.Requests.Users;
+using WorkTree.Communication.Responses.Users;
 
 namespace WorkTree.API.UseCases.Users.Create;
 

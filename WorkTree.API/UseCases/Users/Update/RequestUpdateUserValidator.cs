@@ -1,6 +1,6 @@
 using WorkTree.Communication.Requests;
-using WorkTree.Communication.Responses.User;
 using FluentValidation;
+using WorkTree.Communication.Requests.Users;
 
 namespace WorkTree.API.UseCases.Users.Update;
 

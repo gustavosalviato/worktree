@@ -1,5 +1,6 @@
 using WorkTree.Communication.Requests;
 using FluentValidation;
+using WorkTree.Communication.Requests.Users;
 
 namespace WorkTree.API.UseCases.Users.Create;
 

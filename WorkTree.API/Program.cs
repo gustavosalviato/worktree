@@ -8,6 +8,7 @@ using WorkTree.API.UseCases.Users.Update;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WorkTree.API.UseCases.Tenants.Create;
+using WorkTree.API.UseCases.Tenants.Update;
 using WorkTree.API.UseCases.Users.Delete;
 using WorkTree.API.UseCases.Users.GetAll;
 using WorkTree.API.UseCases.Users.GetById;
@@ -27,6 +28,7 @@ builder.Services.AddScoped<GetUserByIdUseCase>();
 builder.Services.AddScoped<GetAllUsersUseCase>();
 
 builder.Services.AddScoped<CreateTenantUseCase>();
+builder.Services.AddScoped<UpdateTenantUseCase>();
 
 builder.Services.AddScoped<IUserRepository, UsersRepository>();
 builder.Services.AddScoped<ITenantRepository, TenantsRepository>();

@@ -1,4 +1,4 @@
-namespace WorkTree.Communication.Responses.Tenant;
+namespace WorkTree.Communication.Responses.Tenants;
 
 public class ResponseTenantJson
 {

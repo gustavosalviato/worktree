@@ -1,4 +1,4 @@
-namespace WorkTree.Communication.Responses.User;
+namespace WorkTree.Communication.Requests.Users;
 
 public class RequestUpdateUserJson
 {

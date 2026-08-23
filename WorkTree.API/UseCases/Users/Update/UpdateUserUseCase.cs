@@ -1,7 +1,6 @@
-using WorkTree.Communication.Requests;
-using WorkTree.Communication.Responses.User;
 using WorkTree.Exceptions.ExceptionsBase;
 using WorkTree.API.Contracts;
+using WorkTree.Communication.Requests.Users;
 
 namespace WorkTree.API.UseCases.Users.Update;
 
@@ -21,7 +20,7 @@ public class UpdateUserUseCase
         var user = _userRepository.FindById(userId);
 
         if (user is null)
-            throw new NotFoundErrorException("User does not exist.");
+            throw new NotFoundErrorException("User not found.");
 
         user.Name = request.Name;
         user.Touch();

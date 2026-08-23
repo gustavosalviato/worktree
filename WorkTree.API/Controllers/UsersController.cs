@@ -1,12 +1,12 @@
-using WorkTree.Communication.Requests;
 using WorkTree.Communication.Responses;
-using WorkTree.Communication.Responses.User;
 using Microsoft.AspNetCore.Mvc;
 using WorkTree.API.UseCases.Users.Create;
 using WorkTree.API.UseCases.Users.Delete;
 using WorkTree.API.UseCases.Users.GetAll;
 using WorkTree.API.UseCases.Users.GetById;
 using WorkTree.API.UseCases.Users.Update;
+using WorkTree.Communication.Requests.Users;
+using WorkTree.Communication.Responses.Users;
 
 namespace WorkTree.API.Controllers;
 

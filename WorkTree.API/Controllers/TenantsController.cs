@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using WorkTree.API.UseCases.Tenants.Create;
-using WorkTree.API.UseCases.Users.Create;
+using WorkTree.API.UseCases.Tenants.Update;
 using WorkTree.Communication.Requests;
+using WorkTree.Communication.Requests.Tenants;
 using WorkTree.Communication.Responses;
-using WorkTree.Communication.Responses.Tenant;
+using WorkTree.Communication.Responses.Tenants;
 
 namespace WorkTree.API.Controllers;
 
@@ -22,18 +23,18 @@ public class TenantsController : Controller
         return Created(string.Empty, response);
     }
 
-    /*[HttpPut]
-    [Route("{userId}")]
+    [HttpPut]
+    [Route("{tenantId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
-    public IActionResult Update([FromRoute] Guid userId, [FromBody] RequestUpdateUserJson request,
-        [FromServices] UpdateUserUseCase useCase)
+    public IActionResult Update([FromRoute] Guid tenantId, [FromBody] RequestUpdateTenantJson request,
+        [FromServices] UpdateTenantUseCase useCase)
     {
-        useCase.Execute(userId, request);
+        useCase.Execute(tenantId, request);
 
         return NoContent();
-    }*/
+    }
 
 
     /*[HttpDelete]
