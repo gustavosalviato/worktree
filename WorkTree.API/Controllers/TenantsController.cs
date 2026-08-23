@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WorkTree.API.UseCases.Tenants.Create;
+using WorkTree.API.UseCases.Tenants.Delete;
 using WorkTree.API.UseCases.Tenants.Update;
 using WorkTree.Communication.Requests;
 using WorkTree.Communication.Requests.Tenants;
@@ -37,16 +38,16 @@ public class TenantsController : Controller
     }
 
 
-    /*[HttpDelete]
-    [Route("{userId}")]
+    [HttpDelete]
+    [Route("{tenantId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
-    public IActionResult Delete([FromRoute] Guid userId, [FromServices] DeleteUserUseCase useCase)
+    public IActionResult Delete([FromRoute] Guid tenantId, [FromServices] DeleteTenantUseCase useCase)
     {
-        useCase.Execute(userId);
+        useCase.Execute(tenantId);
 
         return Ok();
-    }*/
+    }
 
     /*[HttpGet]
     [Route("{userId}")]
