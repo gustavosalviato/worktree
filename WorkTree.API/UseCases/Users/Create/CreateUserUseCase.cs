@@ -42,7 +42,6 @@ public class CreateUserUseCase
 
         _userRepository.Create(user);
 
-
         return new ResponseUserJson
         {
             Id = user.Id,

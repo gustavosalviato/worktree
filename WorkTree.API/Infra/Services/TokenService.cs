@@ -1,0 +1,46 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using WorkTree.API.Contracts;
+using WorkTree.API.Entities;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
+
+namespace WorkTree.API.Infra.Services;
+
+public class TokenService : ITokenService
+{
+    private readonly IConfiguration _config;
+    private readonly byte[] _key;
+
+
+    public TokenService(IConfiguration config)
+    {
+        _config = config;
+        _key = Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"] ?? "");
+    }
+
+    public string Generate(User user)
+    {
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim("tenantId", user.TenantId.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email.ToString()),
+        };
+
+        var creds = new SigningCredentials(new SymmetricSecurityKey(_key), SecurityAlgorithms.HmacSha256);
+        var expires = DateTime.UtcNow.AddMinutes(int.Parse(_config["Jwt:AccessTokenExpirationMinutes"] ?? "60"));
+
+        var token = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
+            claims: claims,
+            notBefore: DateTime.UtcNow,
+            expires: expires,
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+}
