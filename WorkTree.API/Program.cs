@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WorkTree.API.Infra.Services;
+using WorkTree.API.UseCases.Session.Authenticate;
 using WorkTree.API.UseCases.Tenants.Create;
 using WorkTree.API.UseCases.Tenants.Delete;
 using WorkTree.API.UseCases.Tenants.GetById;
@@ -61,6 +62,8 @@ builder.Services.AddScoped<CreateTenantUseCase>();
 builder.Services.AddScoped<UpdateTenantUseCase>();
 builder.Services.AddScoped<DeleteTenantUseCase>();
 builder.Services.AddScoped<GetTenantByIdUseCase>();
+
+builder.Services.AddScoped<AuthenticaUseUseCase>();
 
 builder.Services.AddScoped<IUserRepository, UsersRepository>();
 builder.Services.AddScoped<ITenantRepository, TenantsRepository>();
