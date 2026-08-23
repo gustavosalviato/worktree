@@ -33,6 +33,7 @@ public class CreateUserUseCase
         {
             Name = request.Name,
             Email = request.Email,
+            TenantId = request.TenantId
         };
 
         var passwordHashed = _passwordHasher.HashPassword(user, request.Password);
