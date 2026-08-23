@@ -4,5 +4,6 @@ namespace WorkTree.API.Contracts;
 
 public interface ITokenService
 {
-    string Generate(User user);
+    string GenerateAccessToken(User user);
+    string GenerateRefreshToken(User user);
 }

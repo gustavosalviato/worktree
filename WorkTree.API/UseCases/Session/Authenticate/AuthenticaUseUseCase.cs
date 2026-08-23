@@ -35,11 +35,13 @@ public class AuthenticaUseUseCase
         if (doesPasswordMatches == PasswordVerificationResult.Failed)
             throw new InvalidCredentialsError("Invalid credentials.");
 
-        var token = _tokenService.Generate(user);
+        var token = _tokenService.GenerateAccessToken(user);
+        var refreshToken = _tokenService.GenerateRefreshToken(user);
 
         var response = new ResponseAuthenticateUserJson
         {
             AccessToken = token,
+            RefreshToken = refreshToken,
         };
 
         return response;
