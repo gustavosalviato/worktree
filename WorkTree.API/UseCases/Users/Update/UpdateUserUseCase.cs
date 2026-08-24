@@ -13,11 +13,11 @@ public class UpdateUserUseCase
         _userRepository = userRepository;
     }
 
-    public void Execute(Guid userId, RequestUpdateUserJson request)
+    public async Task Execute(Guid userId, RequestUpdateUserJson request)
     {
         Validate(request);
 
-        var user = _userRepository.FindById(userId);
+        var user = await _userRepository.FindByIdAsync(userId);
 
         if (user is null)
             throw new NotFoundErrorException("User not found.");
@@ -25,7 +25,7 @@ public class UpdateUserUseCase
         user.Name = request.Name;
         user.Touch();
 
-        _userRepository.Update(user);
+        await _userRepository.UpdateAsync(user);
     }
 
     private void Validate(RequestUpdateUserJson request)

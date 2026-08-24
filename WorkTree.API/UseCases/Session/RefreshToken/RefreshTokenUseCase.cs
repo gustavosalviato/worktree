@@ -28,7 +28,7 @@ public class RefreshTokenUseCase
             throw new UnauthorizedErrorException("Invalid token.");
 
 
-        var user = _userRepository.FindById(subId);
+        var user = await _userRepository.FindByIdAsync(subId);
 
         if (user is null)
             throw new NotFoundErrorException("User not found.");

@@ -12,13 +12,13 @@ public class DeleteUserUseCase
         _userRepository = userRepository;
     }
 
-    public void Execute(Guid userId)
+    public async Task Execute(Guid userId)
     {
-        var user = _userRepository.FindById(userId);
+        var user = await _userRepository.FindByIdAsync(userId);
 
         if (user is null)
             throw new NotFoundErrorException("User does not exist");
 
-        _userRepository.Delete(user);
+        await _userRepository.DeleteAsync(user);
     }
 }

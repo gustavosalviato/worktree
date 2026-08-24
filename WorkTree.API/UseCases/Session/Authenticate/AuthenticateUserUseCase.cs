@@ -23,11 +23,11 @@ public class AuthenticateUserUseCase
         _passwordHasher = passwordHasher;
     }
 
-    public ResponseAuthenticateUserJson Execute(RequestAuthenticateUserJson request)
+    public async Task<ResponseAuthenticateUserJson> Execute(RequestAuthenticateUserJson request)
     {
         Validate(request);
 
-        var user = _userRepository.FindByEmail(request.Email);
+        var user = await _userRepository.FindByEmailAsync(request.Email);
 
         if (user is null)
             throw new InvalidCredentialsError("Invalid credentials.");

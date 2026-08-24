@@ -15,10 +15,10 @@ public class AuthController : Controller
     [Route("login")]
     [ProducesResponseType(typeof(ResponseAuthenticateUserJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
-    public IActionResult Login([FromBody] RequestAuthenticateUserJson request,
+    public async Task<IActionResult> Login([FromBody] RequestAuthenticateUserJson request,
         [FromServices] AuthenticateUserUseCase useCase)
     {
-        var response = useCase.Execute(request);
+        var response = await useCase.Execute(request);
 
         return Created(string.Empty, response);
     }

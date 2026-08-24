@@ -12,9 +12,9 @@ public class GetAllUsersUseCase
         _userRepository = userRepository;
     }
 
-    public List<ResponseUserJson> Execute()
+    public async Task<List<ResponseUserJson>> Execute()
     {
-        var users = _userRepository.FindMany();
+        var users = await _userRepository.FindManyAsync();
 
         return users.Select(user => new ResponseUserJson
         {

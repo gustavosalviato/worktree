@@ -18,11 +18,11 @@ public class CreateUserUseCase
         _passwordHasher = passwordHasher;
     }
 
-    public ResponseUserJson Execute(RequestUserJson request)
+    public async Task<ResponseUserJson> Execute(RequestUserJson request)
     {
         Validate(request);
 
-        var exists = _userRepository.FindByEmail(request.Email);
+        var exists = await _userRepository.FindByEmailAsync(request.Email);
 
         if (exists is not null)
             throw new ConflictErrorException("User with this email already exists.");
@@ -39,13 +39,14 @@ public class CreateUserUseCase
 
         user.PasswordHash = passwordHashed;
 
-        _userRepository.Create(user);
+        await _userRepository.CreateAsync(user);
 
         return new ResponseUserJson
         {
             Id = user.Id,
             Name = user.Name,
             Email = user.Email,
+            TenantId = user.TenantId
         };
     }
 

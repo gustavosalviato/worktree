@@ -4,10 +4,10 @@ namespace WorkTree.API.Contracts.Repositories;
 
 public interface IUserRepository
 {
-    void Create(User user);
-    void Update(User user);
-    void Delete(User user);
-    User? FindByEmail(string email);
-    User? FindById(Guid id);
-    List<User> FindMany();
+    Task CreateAsync(User user);
+    Task UpdateAsync(User user);
+    Task DeleteAsync(User user);
+    Task<User?> FindByEmailAsync(string email);
+    Task<User?> FindByIdAsync(Guid id);
+    Task<List<User>> FindManyAsync();
 }

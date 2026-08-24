@@ -12,7 +12,7 @@ public class TenantsRepository : ITenantRepository
     public void Create(Tenant tenant)
     {
         _context.Tenants.Add(tenant);
-        _context.SaveChanges();
+        _context.SaveChangesAsync();
     }
 
     public void Update(Tenant tenant)

@@ -13,9 +13,9 @@ public class GetUserByIdUseCase
         _userRepository = userRepository;
     }
 
-    public ResponseUserJson Execute(Guid userId)
+    public async Task<ResponseUserJson> Execute(Guid userId)
     {
-        var user = _userRepository.FindById(userId);
+        var user = await _userRepository.FindByIdAsync(userId);
 
         if (user is null)
             throw new NotFoundErrorException("User does not exist");

@@ -18,9 +18,10 @@ public class UsersController : Controller
     [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status409Conflict)]
-    public IActionResult Register([FromBody] RequestUserJson request, [FromServices] CreateUserUseCase useCase)
+    public async Task<IActionResult> Register([FromBody] RequestUserJson request,
+        [FromServices] CreateUserUseCase useCase)
     {
-        var response = useCase.Execute(request);
+        var response = await useCase.Execute(request);
 
         return Created(string.Empty, response);
     }
@@ -30,10 +31,10 @@ public class UsersController : Controller
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
-    public IActionResult Update([FromRoute] Guid userId, [FromBody] RequestUpdateUserJson request,
+    public async Task<IActionResult> Update([FromRoute] Guid userId, [FromBody] RequestUpdateUserJson request,
         [FromServices] UpdateUserUseCase useCase)
     {
-        useCase.Execute(userId, request);
+        await useCase.Execute(userId, request);
 
         return NoContent();
     }
@@ -43,9 +44,9 @@ public class UsersController : Controller
     [Route("{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
-    public IActionResult Delete([FromRoute] Guid userId, [FromServices] DeleteUserUseCase useCase)
+    public async Task<IActionResult> Delete([FromRoute] Guid userId, [FromServices] DeleteUserUseCase useCase)
     {
-        useCase.Execute(userId);
+        await useCase.Execute(userId);
 
         return Ok();
     }
@@ -54,9 +55,9 @@ public class UsersController : Controller
     [Route("{userId}")]
     [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
-    public IActionResult GetById([FromRoute] Guid userId, [FromServices] GetUserByIdUseCase useCase)
+    public async Task<IActionResult> GetById([FromRoute] Guid userId, [FromServices] GetUserByIdUseCase useCase)
     {
-        var response = useCase.Execute(userId);
+        var response = await useCase.Execute(userId);
 
         return Ok(response);
     }
@@ -64,9 +65,9 @@ public class UsersController : Controller
     [HttpGet]
     [ProducesResponseType(typeof(List<ResponseUserJson>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status204NoContent)]
-    public IActionResult GetAll([FromServices] GetAllUsersUseCase useCase)
+    public async Task<IActionResult> GetAll([FromServices] GetAllUsersUseCase useCase)
     {
-        var users = useCase.Execute();
+        var users = await useCase.Execute();
 
         if (users.Count == 0)
             return NoContent();

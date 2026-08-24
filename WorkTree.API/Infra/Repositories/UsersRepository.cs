@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using WorkTree.API.Contracts.Repositories;
 using WorkTree.API.Entities;
 
@@ -9,41 +10,41 @@ public class UsersRepository : IUserRepository
 
     public UsersRepository(WorkTreeDbContext context) => _context = context;
 
-    public void Create(User user)
+    public async Task CreateAsync(User user)
     {
         _context.Users.Add(user);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void Update(User user)
+    public async Task UpdateAsync(User user)
     {
         _context.Users.Update(user);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void Delete(User user)
+    public async Task DeleteAsync(User user)
     {
         _context.Users.Remove(user);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public User? FindByEmail(string email)
+    public async Task<User?> FindByEmailAsync(string email)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Email == email);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
         return user;
     }
 
-    public User? FindById(Guid id)
+    public async Task<User?> FindByIdAsync(Guid id)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == id);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
         return user;
     }
 
-    public List<User> FindMany()
+    public async Task<List<User>> FindManyAsync()
     {
-        var users = _context.Users.ToList();
+        var users = await _context.Users.ToListAsync();
 
         return users;
     }
