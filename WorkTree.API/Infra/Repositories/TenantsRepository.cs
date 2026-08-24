@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using WorkTree.API.Contracts.Repositories;
 using WorkTree.API.Entities;
 
@@ -9,34 +10,39 @@ public class TenantsRepository : ITenantRepository
 
     public TenantsRepository(WorkTreeDbContext context) => _context = context;
 
-    public void Create(Tenant tenant)
+    public async Task CreateAsync(Tenant tenant)
     {
         _context.Tenants.Add(tenant);
-        _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
-    public void Update(Tenant tenant)
+    public async Task UpdateAsync(Tenant tenant)
     {
         _context.Tenants.Update(tenant);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void Delete(Tenant tenant)
+    public async Task DeleteAsync(Tenant tenant)
     {
         _context.Tenants.Remove(tenant);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public Tenant? FindById(Guid id)
+    public async Task<Tenant?> FindByIdAsync(Guid id)
     {
-        var tenant = _context.Tenants.FirstOrDefault(u => u.Id == id);
+        var tenant = await _context.Tenants.FirstOrDefaultAsync(u => u.Id == id);
 
         return tenant;
     }
 
-    public Tenant? FindByEmail(string email)
+    public Task<Tenant?> FindByEmail(string email)
     {
-        var tenant = _context.Tenants.FirstOrDefault(u => u.Email == email);
+        throw new NotImplementedException();
+    }
+
+    public async Task<Tenant?> FindByEmailAsync(string email)
+    {
+        var tenant = await _context.Tenants.FirstOrDefaultAsync(u => u.Email == email);
 
         return tenant;
     }

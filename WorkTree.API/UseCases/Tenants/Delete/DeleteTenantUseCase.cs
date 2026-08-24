@@ -11,13 +11,13 @@ public class DeleteTenantUseCase
     public DeleteTenantUseCase(ITenantRepository tenantRepository) => _tenantRepository = tenantRepository;
 
 
-    public void Execute(Guid tenantId)
+    public async Task Execute(Guid tenantId)
     {
-        var tenant = _tenantRepository.FindById(tenantId);
+        var tenant = await _tenantRepository.FindByIdAsync(tenantId);
 
         if (tenant is null)
             throw new NotFoundErrorException("Tenant not found");
 
-        _tenantRepository.Delete(tenant);
+        await _tenantRepository.DeleteAsync(tenant);
     }
 }

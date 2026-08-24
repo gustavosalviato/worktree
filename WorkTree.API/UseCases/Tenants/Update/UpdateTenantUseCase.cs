@@ -10,11 +10,11 @@ public class UpdateTenantUseCase
 
     public UpdateTenantUseCase(ITenantRepository tenantRepository) => _tenantRepository = tenantRepository;
 
-    public void Execute(Guid tenantId, RequestUpdateTenantJson request)
+    public async Task Execute(Guid tenantId, RequestUpdateTenantJson request)
     {
         Validate(request);
 
-        var tenant = _tenantRepository.FindById(tenantId);
+        var tenant = await _tenantRepository.FindByIdAsync(tenantId);
 
         if (tenant is null)
             throw new NotFoundErrorException("Tenant not found.");
@@ -22,7 +22,7 @@ public class UpdateTenantUseCase
         tenant.Name = request.Name;
         tenant.Touch();
 
-        _tenantRepository.Update(tenant);
+        await _tenantRepository.UpdateAsync(tenant);
     }
 
     private void Validate(RequestUpdateTenantJson request)

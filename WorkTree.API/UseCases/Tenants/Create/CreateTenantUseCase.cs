@@ -11,11 +11,11 @@ public class CreateTenantUseCase
 
     public CreateTenantUseCase(ITenantRepository tenantRepository) => _tenantRepository = tenantRepository;
 
-    public ResponseTenantJson Execute(RequestTenantJson request)
+    public async Task<ResponseTenantJson> Execute(RequestTenantJson request)
     {
         Validate(request);
 
-        var exists = _tenantRepository.FindByEmail(request.Email);
+        var exists = await _tenantRepository.FindByEmailAsync(request.Email);
 
         if (exists is not null)
             throw new ConflictErrorException("A tenant with this email already exists.");
@@ -26,8 +26,8 @@ public class CreateTenantUseCase
             Name = request.Name,
             Email = request.Email,
         };
-        
-        _tenantRepository.Create(tenant);
+
+        await _tenantRepository.CreateAsync(tenant);
 
         return new ResponseTenantJson
         {

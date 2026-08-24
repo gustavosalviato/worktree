@@ -11,9 +11,9 @@ public class GetTenantByIdUseCase
     public GetTenantByIdUseCase(ITenantRepository tenantRepository) => _tenantRepository = tenantRepository;
 
 
-    public ResponseTenantJson Execute(Guid tenantId)
+    public async Task<ResponseTenantJson> Execute(Guid tenantId)
     {
-        var tenant = _tenantRepository.FindById(tenantId);
+        var tenant = await _tenantRepository.FindByIdAsync(tenantId);
 
         if (tenant is null)
             throw new NotFoundErrorException("Tenant not found");
