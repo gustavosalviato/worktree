@@ -15,9 +15,8 @@ public class AuthController : Controller
     [Route("login")]
     [ProducesResponseType(typeof(ResponseAuthenticateUserJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
     public IActionResult Login([FromBody] RequestAuthenticateUserJson request,
-        [FromServices] AuthenticaUseUseCase useCase)
+        [FromServices] AuthenticateUserUseCase useCase)
     {
         var response = useCase.Execute(request);
 

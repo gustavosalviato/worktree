@@ -7,14 +7,14 @@ using WorkTree.Exceptions.ExceptionsBase;
 
 namespace WorkTree.API.UseCases.Session.Authenticate;
 
-public class AuthenticaUseUseCase
+public class AuthenticateUserUseCase
 {
     private readonly ITokenService _tokenService;
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher<User> _passwordHasher;
 
 
-    public AuthenticaUseUseCase(ITokenService tokenService, IUserRepository userRepository,
+    public AuthenticateUserUseCase(ITokenService tokenService, IUserRepository userRepository,
         IPasswordHasher<User> passwordHasher)
     {
         _tokenService = tokenService;
@@ -24,10 +24,12 @@ public class AuthenticaUseUseCase
 
     public ResponseAuthenticateUserJson Execute(RequestAuthenticateUserJson request)
     {
+        Validate(request);
+
         var user = _userRepository.FindByEmail(request.Email);
 
         if (user is null)
-            throw new NotFoundErrorException("User not found.");
+            throw new InvalidCredentialsError("Invalid credentials.");
 
 
         var doesPasswordMatches = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
@@ -45,5 +47,20 @@ public class AuthenticaUseUseCase
         };
 
         return response;
+    }
+
+
+    public void Validate(RequestAuthenticateUserJson request)
+    {
+        var validator = new RequestAuthenticateUserValidator();
+
+        var result = validator.Validate(request);
+
+        if (!result.IsValid)
+        {
+            var errors = result.Errors.Select(error => error.ErrorMessage).ToList();
+
+            throw new ErrorOnValidationException(errors);
+        }
     }
 }

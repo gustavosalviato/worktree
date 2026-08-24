@@ -53,7 +53,7 @@ builder.Services.AddScoped<UpdateTenantUseCase>();
 builder.Services.AddScoped<DeleteTenantUseCase>();
 builder.Services.AddScoped<GetTenantByIdUseCase>();
 
-builder.Services.AddScoped<AuthenticaUseUseCase>();
+builder.Services.AddScoped<AuthenticateUserUseCase>();
 builder.Services.AddScoped<RefreshTokenUseCase>();
 
 builder.Services.AddScoped<IUserRepository, UsersRepository>();

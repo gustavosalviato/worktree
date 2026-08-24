@@ -20,7 +20,8 @@ public class GetAllUsersUseCase
         {
             Id = user.Id,
             Name = user.Name,
-            Email = user.Email
+            Email = user.Email,
+            TenantId = user.TenantId
         }).ToList();
     }
 }

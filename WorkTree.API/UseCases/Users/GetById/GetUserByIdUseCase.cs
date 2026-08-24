@@ -25,6 +25,7 @@ public class GetUserByIdUseCase
             Id = user.Id,
             Name = user.Name,
             Email = user.Email,
+            TenantId = user.TenantId
         };
     }
 }
