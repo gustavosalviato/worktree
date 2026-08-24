@@ -1,4 +1,4 @@
-using WorkTree.API.Contracts;
+using WorkTree.API.Contracts.Repositories;
 using WorkTree.Exceptions.ExceptionsBase;
 
 namespace WorkTree.API.UseCases.Users.Delete;

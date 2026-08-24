@@ -1,4 +1,4 @@
-using WorkTree.API.Contracts;
+using WorkTree.API.Contracts.Repositories;
 using WorkTree.Communication.Responses.Users;
 
 namespace WorkTree.API.UseCases.Users.GetAll;

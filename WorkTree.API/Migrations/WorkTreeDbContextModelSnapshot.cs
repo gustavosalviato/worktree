@@ -44,7 +44,7 @@ namespace WorkTree.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tenants");
+                    b.ToTable("Tenant");
                 });
 
             modelBuilder.Entity("WorkTree.API.Entities.User", b =>

@@ -1,6 +1,4 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using WorkTree.API.Contracts;
 using WorkTree.API.Entities;
 using WorkTree.API.Filters;
 using WorkTree.API.Infra;
@@ -9,7 +7,8 @@ using WorkTree.API.UseCases.Users.Create;
 using WorkTree.API.UseCases.Users.Update;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using WorkTree.API.Contracts.Repositories;
+using WorkTree.API.Contracts.Services;
 using WorkTree.API.Infra.Services;
 using WorkTree.API.UseCases.Session.Authenticate;
 using WorkTree.API.UseCases.Session.RefreshToken;

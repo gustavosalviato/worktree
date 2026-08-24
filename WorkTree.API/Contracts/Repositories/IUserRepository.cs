@@ -1,6 +1,6 @@
 using WorkTree.API.Entities;
 
-namespace WorkTree.API.Contracts;
+namespace WorkTree.API.Contracts.Repositories;
 
 public interface IUserRepository
 {

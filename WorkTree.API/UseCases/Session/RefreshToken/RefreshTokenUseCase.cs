@@ -1,4 +1,5 @@
-using WorkTree.API.Contracts;
+using WorkTree.API.Contracts.Repositories;
+using WorkTree.API.Contracts.Services;
 using WorkTree.Communication.Requests.Auth;
 using WorkTree.Communication.Responses.Auth;
 using WorkTree.Exceptions.ExceptionsBase;

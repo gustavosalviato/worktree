@@ -11,4 +11,5 @@ public class WorkTreeDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Tenant> Tenants { get; set; }
+    public DbSet<Tenant> RefreshTokens { get; set; }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using WorkTree.API.Contracts;
+using WorkTree.API.Contracts.Repositories;
+using WorkTree.API.Contracts.Services;
 using WorkTree.API.Entities;
 using WorkTree.Communication.Requests.Auth;
 using WorkTree.Communication.Responses.Auth;

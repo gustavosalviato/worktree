@@ -1,5 +1,5 @@
 using WorkTree.Exceptions.ExceptionsBase;
-using WorkTree.API.Contracts;
+using WorkTree.API.Contracts.Repositories;
 using WorkTree.Communication.Requests.Users;
 
 namespace WorkTree.API.UseCases.Users.Update;

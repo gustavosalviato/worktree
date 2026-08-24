@@ -1,4 +1,4 @@
-using WorkTree.API.Contracts;
+using WorkTree.API.Contracts.Repositories;
 using WorkTree.Communication.Responses.Tenants;
 using WorkTree.Exceptions.ExceptionsBase;
 
