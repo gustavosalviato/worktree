@@ -1,7 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using WorkTree.API.Contracts.Repositories;
 using WorkTree.API.Contracts.Services;
 using WorkTree.API.Entities;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
@@ -11,14 +13,67 @@ namespace WorkTree.API.Infra.Services;
 public class TokenService : ITokenService
 {
     private readonly IConfiguration _config;
+    private readonly IRefreshTokenRepository _repository;
     private readonly byte[] _key;
 
 
-    public TokenService(IConfiguration config)
+    public TokenService(IConfiguration config, IRefreshTokenRepository repository)
     {
         _config = config;
         _key = Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"] ?? "");
+        _repository = repository;
     }
+
+    public async Task<(string acessToken, string refreshToken)> GenerateTokensAsync(User user)
+    {
+        var accessToken = GenerateAccessToken(user);
+        var refreshToken = GenerateRefreshToken();
+
+        var hashed = HashToken(refreshToken);
+
+        var rt = new RefreshToken()
+        {
+            TokenHash = hashed,
+            UserId = user.Id,
+            ExpiresAt = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpirationDays"] ?? string.Empty)),
+        };
+
+        await _repository.CreateAsync(rt);
+
+        return (accessToken, refreshToken);
+    }
+
+    public async Task<(bool success, string? newAccessToken, string? newRefreshToken)> RefreshAsync(string refreshToken)
+    {
+        var hashed = HashToken(refreshToken);
+
+        var rtEntity = await _repository.GetTokenByHashedAsync(hashed);
+
+        if (rtEntity == null || rtEntity.IsRevoked || rtEntity.IsExpired)
+            return (false, null, null);
+
+        rtEntity.RevokedAt = DateTime.UtcNow;
+        rtEntity.Touch();
+
+        await _repository.UpdateAsync(rtEntity);
+
+        var newRefreshToken = GenerateRefreshToken();
+        var newHashed = HashToken(newRefreshToken);
+
+        var rt = new RefreshToken()
+        {
+            TokenHash = newHashed,
+            UserId = rtEntity.UserId,
+            ExpiresAt = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpirationDays"] ?? string.Empty)),
+        };
+
+        await _repository.CreateAsync(rt);
+
+        var newAccessToken = GenerateAccessToken(rtEntity.User);
+
+        return (true, newAccessToken, newRefreshToken);
+    }
+
 
     public string GenerateAccessToken(User user)
     {
@@ -45,43 +100,32 @@ public class TokenService : ITokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string GenerateRefreshToken(User user)
+    public string GenerateRefreshToken()
     {
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        };
+        var random = RandomNumberGenerator.GetBytes(64);
 
-        var credentials = new SigningCredentials(new SymmetricSecurityKey(_key), SecurityAlgorithms.HmacSha256);
-        var expires = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpirationDays"] ?? "30"));
-
-        var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
-            claims: claims,
-            notBefore: DateTime.UtcNow,
-            expires: expires,
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return Convert.ToBase64String(random);
     }
 
-    public async Task<(bool isValid, string? subId)> ValidateTokenAsync(string token)
+    public string HashToken(string token)
     {
-        var tokenParameters = TokenHelper.BuildTokenValidationParameters(_config);
-        var validTokenResult = await new JwtSecurityTokenHandler().ValidateTokenAsync(token, tokenParameters);
+        var bytes = Encoding.UTF8.GetBytes(token);
+        var hash = SHA256.HashData(bytes);
 
-        if (!validTokenResult.IsValid)
-            return (false, null);
+        return Convert.ToHexString(hash);
+    }
 
+    public async Task RevokeRefreshTokenAsync(string refreshToken)
+    {
+        var hashed = HashToken(refreshToken);
 
-        if (!validTokenResult.Claims.TryGetValue(ClaimTypes.NameIdentifier, out var subId))
-        {
-            return (false, null);
-        }
+        var rtEntity = await _repository.GetTokenByHashedAsync(hashed);
 
-        return (true, subId.ToString());
+        if (rtEntity is null)
+            return;
+
+        rtEntity.RevokedAt = DateTime.UtcNow;
+
+        await _repository.UpdateAsync(rtEntity);
     }
 }

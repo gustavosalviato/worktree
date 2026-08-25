@@ -9,37 +9,25 @@ namespace WorkTree.API.UseCases.Session.RefreshToken;
 public class RefreshTokenUseCase
 {
     private readonly ITokenService _tokenService;
-    private readonly IUserRepository _userRepository;
 
-    public RefreshTokenUseCase(ITokenService tokenService, IUserRepository userRepository)
-    {
-        _tokenService = tokenService;
-        _userRepository = userRepository;
-    }
+
+    public RefreshTokenUseCase(ITokenService tokenService) => _tokenService = tokenService;
 
 
     public async Task<ResponseRefreshTokenJson> Execute(RequestRefreshTokenJson request)
     {
         Validate(request);
 
-        var isValidTokenResult = await _tokenService.ValidateTokenAsync(request.RefreshToken);
+        var (success, newAccess, newRefresh) = await _tokenService.RefreshAsync(request.RefreshToken);
 
-        if (!Guid.TryParse(isValidTokenResult.subId, out var subId))
+        if (!success)
             throw new UnauthorizedErrorException("Invalid token.");
 
 
-        var user = await _userRepository.FindByIdAsync(subId);
-
-        if (user is null)
-            throw new NotFoundErrorException("User not found.");
-
-        var accessToken = _tokenService.GenerateAccessToken(user);
-        var refreshToken = _tokenService.GenerateRefreshToken(user);
-
         return new ResponseRefreshTokenJson
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken,
+            AccessToken = newAccess!,
+            RefreshToken = newRefresh!,
         };
     }
 

@@ -2,8 +2,9 @@ namespace WorkTree.API.Entities;
 
 public class RefreshToken : EntityBase
 {
-    public string HashToken { get; set; } = string.Empty;
+    public string TokenHash { get; set; } = string.Empty;
     public Guid UserId { get; set; }
+    public User User { get; set; } = null!;
     public DateTime ExpiresAt { get; set; }
     public DateTime? RevokedAt { get; set; }
     public bool IsExpired => DateTime.UtcNow >= ExpiresAt;

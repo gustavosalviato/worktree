@@ -38,20 +38,19 @@ public class AuthenticateUserUseCase
         if (doesPasswordMatches == PasswordVerificationResult.Failed)
             throw new InvalidCredentialsError("Invalid credentials.");
 
-        var token = _tokenService.GenerateAccessToken(user);
-        var refreshToken = _tokenService.GenerateRefreshToken(user);
+        var result = await _tokenService.GenerateTokensAsync(user);
 
         var response = new ResponseAuthenticateUserJson
         {
-            AccessToken = token,
-            RefreshToken = refreshToken,
+            AccessToken = result.acessToken,
+            RefreshToken = result.refreshToken,
         };
 
         return response;
     }
 
 
-    public void Validate(RequestAuthenticateUserJson request)
+    private void Validate(RequestAuthenticateUserJson request)
     {
         var validator = new RequestAuthenticateUserValidator();
 

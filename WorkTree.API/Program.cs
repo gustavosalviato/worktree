@@ -57,6 +57,7 @@ builder.Services.AddScoped<RefreshTokenUseCase>();
 
 builder.Services.AddScoped<IUserRepository, UsersRepository>();
 builder.Services.AddScoped<ITenantRepository, TenantsRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokensRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddDbContext<WorkTreeDbContext>(option =>
