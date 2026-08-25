@@ -31,12 +31,9 @@ public class TokenService : ITokenService
 
         var hashed = HashToken(refreshToken);
 
-        var rt = new RefreshToken()
-        {
-            TokenHash = hashed,
-            UserId = user.Id,
-            ExpiresAt = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpirationDays"] ?? string.Empty)),
-        };
+        var expiresAt = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpirationDays"] ?? string.Empty));
+
+        var rt = new RefreshToken(hashed, user.Id, expiresAt);
 
         await _repository.CreateAsync(rt);
 
@@ -52,20 +49,16 @@ public class TokenService : ITokenService
         if (rtEntity == null || rtEntity.IsRevoked || rtEntity.IsExpired)
             return (false, null, null);
 
-        rtEntity.RevokedAt = DateTime.UtcNow;
-        rtEntity.Touch();
+        rtEntity.Revoke();
 
         await _repository.UpdateAsync(rtEntity);
 
         var newRefreshToken = GenerateRefreshToken();
         var newHashed = HashToken(newRefreshToken);
 
-        var rt = new RefreshToken()
-        {
-            TokenHash = newHashed,
-            UserId = rtEntity.UserId,
-            ExpiresAt = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpirationDays"] ?? string.Empty)),
-        };
+        var expiresAt = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpirationDays"] ?? string.Empty));
+
+        var rt = new RefreshToken(newHashed, rtEntity.UserId, expiresAt);
 
         await _repository.CreateAsync(rt);
 
@@ -124,11 +117,10 @@ public class TokenService : ITokenService
         if (rtEntity is null)
             return false;
 
-        rtEntity.RevokedAt = DateTime.UtcNow;
-        rtEntity.Touch();
+        rtEntity.Revoke();
 
         await _repository.UpdateAsync(rtEntity);
-    
+
         return true;
     }
 }
