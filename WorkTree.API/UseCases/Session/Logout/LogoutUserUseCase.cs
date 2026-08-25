@@ -1,35 +1,26 @@
 using WorkTree.API.Contracts.Services;
+using WorkTree.API.UseCases.Session.RefreshToken;
 using WorkTree.Communication.Requests.Auth;
-using WorkTree.Communication.Responses.Auth;
 using WorkTree.Exceptions.ExceptionsBase;
 
-namespace WorkTree.API.UseCases.Session.RefreshToken;
+namespace WorkTree.API.UseCases.Session.Logout;
 
-public class RefreshTokenUseCase
+public class LogoutUserUseCase
 {
     private readonly ITokenService _tokenService;
 
+    public LogoutUserUseCase(ITokenService tokenService) => _tokenService = tokenService;
 
-    public RefreshTokenUseCase(ITokenService tokenService) => _tokenService = tokenService;
 
-
-    public async Task<ResponseRefreshTokenJson> Execute(RequestRefreshTokenJson request)
+    public async Task Execute(RequestRefreshTokenJson request)
     {
         Validate(request);
 
-        var (success, newAccess, newRefresh) = await _tokenService.RefreshAsync(request.RefreshToken);
+        var success = await _tokenService.RevokeRefreshTokenAsync(request.RefreshToken);
 
         if (!success)
             throw new UnauthorizedErrorException("Invalid token.");
-
-
-        return new ResponseRefreshTokenJson
-        {
-            AccessToken = newAccess!,
-            RefreshToken = newRefresh!,
-        };
     }
-
 
     private void Validate(RequestRefreshTokenJson request)
     {

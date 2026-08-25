@@ -115,17 +115,20 @@ public class TokenService : ITokenService
         return Convert.ToHexString(hash);
     }
 
-    public async Task RevokeRefreshTokenAsync(string refreshToken)
+    public async Task<bool> RevokeRefreshTokenAsync(string refreshToken)
     {
         var hashed = HashToken(refreshToken);
 
         var rtEntity = await _repository.GetTokenByHashedAsync(hashed);
 
         if (rtEntity is null)
-            return;
+            return false;
 
         rtEntity.RevokedAt = DateTime.UtcNow;
+        rtEntity.Touch();
 
         await _repository.UpdateAsync(rtEntity);
+    
+        return true;
     }
 }

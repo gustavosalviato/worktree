@@ -11,6 +11,7 @@ using WorkTree.API.Contracts.Repositories;
 using WorkTree.API.Contracts.Services;
 using WorkTree.API.Infra.Services;
 using WorkTree.API.UseCases.Session.Authenticate;
+using WorkTree.API.UseCases.Session.Logout;
 using WorkTree.API.UseCases.Session.RefreshToken;
 using WorkTree.API.UseCases.Tenants.Create;
 using WorkTree.API.UseCases.Tenants.Delete;
@@ -54,6 +55,7 @@ builder.Services.AddScoped<GetTenantByIdUseCase>();
 
 builder.Services.AddScoped<AuthenticateUserUseCase>();
 builder.Services.AddScoped<RefreshTokenUseCase>();
+builder.Services.AddScoped<LogoutUserUseCase>();
 
 builder.Services.AddScoped<IUserRepository, UsersRepository>();
 builder.Services.AddScoped<ITenantRepository, TenantsRepository>();
