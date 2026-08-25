@@ -28,16 +28,11 @@ public class CreateUserUseCase
             throw new ConflictErrorException("User with this email already exists.");
 
 
-        var user = new User
-        {
-            Name = request.Name,
-            Email = request.Email,
-            TenantId = request.TenantId
-        };
+        var user = new User(request.Name, request.Email, request.TenantId);
 
         var passwordHashed = _passwordHasher.HashPassword(user, request.Password);
 
-        user.PasswordHash = passwordHashed;
+        user.ChangePassword(passwordHashed);
 
         await _userRepository.CreateAsync(user);
 
