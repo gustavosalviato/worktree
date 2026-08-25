@@ -19,8 +19,7 @@ public class UpdateTenantUseCase
         if (tenant is null)
             throw new NotFoundErrorException("Tenant not found.");
 
-        tenant.Name = request.Name;
-        tenant.Touch();
+        tenant.Update(request.Name);
 
         await _tenantRepository.UpdateAsync(tenant);
     }

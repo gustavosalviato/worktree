@@ -24,7 +24,7 @@ public class User : EntityBase
         Touch();
     }
 
-    public void UpdateUser(string name)
+    public void Update(string name)
     {
         Name = name;
         Touch();

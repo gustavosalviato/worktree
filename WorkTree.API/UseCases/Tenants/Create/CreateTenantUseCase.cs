@@ -1,4 +1,5 @@
 using WorkTree.API.Contracts.Repositories;
+using WorkTree.API.Entities;
 using WorkTree.Communication.Requests.Tenants;
 using WorkTree.Communication.Responses.Tenants;
 using WorkTree.Exceptions.ExceptionsBase;
@@ -20,12 +21,7 @@ public class CreateTenantUseCase
         if (exists is not null)
             throw new ConflictErrorException("A tenant with this email already exists.");
 
-
-        var tenant = new Entities.Tenant
-        {
-            Name = request.Name,
-            Email = request.Email,
-        };
+        var tenant = new Tenant(request.Name, request.Email);
 
         await _tenantRepository.CreateAsync(tenant);
 

@@ -2,11 +2,28 @@ namespace WorkTree.API.Entities;
 
 public class Tenant : EntityBase
 {
-    public string Name { get; set; }
-    public string Email { get; set; }
-    public ICollection<User> Users { get; set; }
+    public string Name { get; private set; }
+    public string Email { get; private set; }
+    public ICollection<User> Users { get; private set; } = [];
 
-    public void Touch()
+    public Tenant()
+    {
+    }
+
+    public Tenant(string name, string email)
+    {
+        Name = name;
+        Email = email;
+    }
+
+
+    public void Update(string name)
+    {
+        Name = name;
+        Touch();
+    }
+
+    private void Touch()
     {
         UpdatedAt = DateTime.UtcNow;
     }

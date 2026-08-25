@@ -22,7 +22,7 @@ public class UpdateUserUseCase
         if (user is null)
             throw new NotFoundErrorException("User not found.");
 
-        user.UpdateUser(request.Name);
+        user.Update(request.Name);
 
         await _userRepository.UpdateAsync(user);
     }
