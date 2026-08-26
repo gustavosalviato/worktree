@@ -8,8 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WorkTree.Communication\WorkTree.Communication.csproj" />
-    <ProjectReference Include="..\WorkTree.Exceptions\WorkTree.Exceptions.csproj" />
+    <ProjectReference Include="..\..\Shared\WorkTree.Communication\WorkTree.Communication.csproj" />
+    <ProjectReference Include="..\..\Shared\WorkTree.Exceptions\WorkTree.Exceptions.csproj" />
+    <ProjectReference Include="..\WorkTree.Application\WorkTree.Application.csproj" />
+    <ProjectReference Include="..\WorkTree.Infra\WorkTree.Infra.csproj" />
   </ItemGroup>
 
   <ItemGroup>

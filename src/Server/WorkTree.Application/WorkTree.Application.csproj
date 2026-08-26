@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Shared\WorkTree.Communication\WorkTree.Communication.csproj" />
+      <ProjectReference Include="..\..\Shared\WorkTree.Exceptions\WorkTree.Exceptions.csproj" />
+      <ProjectReference Include="..\WorkTree.Domain\WorkTree.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

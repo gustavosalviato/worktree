@@ -1,5 +1,14 @@
 <Solution>
-  <Project Path="WorkTree.API\WorkTree.API.csproj" />
-  <Project Path="WorkTree.Communication\WorkTree.Communication.csproj" />
-  <Project Path="WorkTree.Exceptions\WorkTree.Exceptions.csproj" />
+  <Folder Name="/src/" />
+  <Folder Name="/src/Server/">
+    <Project Path="src/Server/WorkTree.API\WorkTree.API.csproj" />
+    <Project Path="src/Server/WorkTree.Application/WorkTree.Application.csproj" />
+    <Project Path="src/Server/WorkTree.Domain/WorkTree.Domain.csproj" />
+    <Project Path="src/Server/WorkTree.Infra/WorkTree.Infra.csproj" />
+  </Folder>
+  <Folder Name="/src/Shared/">
+    <Project Path="src/Shared/WorkTree.Communication\WorkTree.Communication.csproj" />
+    <Project Path="src/Shared/WorkTree.Exceptions\WorkTree.Exceptions.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
 </Solution>
