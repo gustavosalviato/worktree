@@ -50,4 +50,4 @@ public class AuthController : Controller
 
         return NoContent();
     }
-} 
+}

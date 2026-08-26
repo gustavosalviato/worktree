@@ -25,6 +25,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSwaggerGen();
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -69,6 +71,13 @@ builder.Services.AddDbContext<WorkTreeDbContext>(option =>
 
 
 var app = builder.Build();
+
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
 
