@@ -3,12 +3,12 @@ using WorkTree.API.Entities;
 using WorkTree.API.Filters;
 using WorkTree.API.Infra;
 using WorkTree.API.Infra.Repositories;
-using WorkTree.API.UseCases.Users.Create;
 using WorkTree.API.UseCases.Users.Update;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WorkTree.API.Contracts.Repositories;
 using WorkTree.API.Contracts.Services;
+using WorkTree.API.Converters;
 using WorkTree.API.Infra.Services;
 using WorkTree.API.UseCases.Session.Authenticate;
 using WorkTree.API.UseCases.Session.Logout;
@@ -20,12 +20,19 @@ using WorkTree.API.UseCases.Tenants.Update;
 using WorkTree.API.UseCases.Users.Delete;
 using WorkTree.API.UseCases.Users.GetAll;
 using WorkTree.API.UseCases.Users.GetById;
+using WorkTree.Application;
+using WorkTree.Application.UseCases.Users.Create;
+using WorkTree.Infra;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new StringConverter()));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
 
 
 builder.Services.AddAuthentication(options =>
@@ -69,6 +76,7 @@ builder.Services.AddDbContext<WorkTreeDbContext>(option =>
     option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 var app = builder.Build();
 
