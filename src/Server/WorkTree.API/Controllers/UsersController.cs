@@ -1,10 +1,10 @@
 using WorkTree.Communication.Responses;
 using Microsoft.AspNetCore.Mvc;
-using WorkTree.API.UseCases.Users.Create;
 using WorkTree.API.UseCases.Users.Delete;
 using WorkTree.API.UseCases.Users.GetAll;
 using WorkTree.API.UseCases.Users.GetById;
 using WorkTree.API.UseCases.Users.Update;
+using WorkTree.Application.UseCases.User.Create;
 using WorkTree.Communication.Requests.Users;
 using WorkTree.Communication.Responses.Users;
 
@@ -19,7 +19,7 @@ public class UsersController : Controller
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register([FromBody] RequestUserJson request,
-        [FromServices] CreateUserUseCase useCase)
+        [FromServices] ICreateUserUseCase useCase)
     {
         var response = await useCase.Execute(request);
 

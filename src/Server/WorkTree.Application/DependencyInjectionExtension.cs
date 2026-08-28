@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using WorkTree.Application.UseCases.Users.Create;
+using WorkTree.Application.UseCases.User.Create;
 
 namespace WorkTree.Application;
 
