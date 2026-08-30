@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using WorkTree.API.Filters;
-using WorkTree.API.Infra;
-using Microsoft.EntityFrameworkCore;
 using WorkTree.API.Converters;
 using WorkTree.API.Infra.Services;
 using WorkTree.Application;
@@ -15,7 +13,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 
 builder.Services.AddAuthentication(options =>
@@ -54,10 +52,6 @@ builder.Services.AddMvc(option => option.Filters.Add(typeof(ExceptionFilter)));
 // builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokensRepository>();
 // builder.Services.AddScoped<ITokenService, TokenService>();
 
-builder.Services.AddDbContext<WorkTreeDbContext>(option =>
-{
-    option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 

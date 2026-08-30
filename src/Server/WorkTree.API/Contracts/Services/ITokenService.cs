@@ -1,4 +1,4 @@
-using WorkTree.API.Entities;
+using WorkTree.Domain.Entities;
 
 namespace WorkTree.API.Contracts.Services;
 

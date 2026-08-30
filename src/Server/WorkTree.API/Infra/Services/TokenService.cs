@@ -3,9 +3,8 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using WorkTree.API.Contracts.Repositories;
 using WorkTree.API.Contracts.Services;
-using WorkTree.API.Entities;
+using WorkTree.Domain.Entities;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace WorkTree.API.Infra.Services;
@@ -13,16 +12,17 @@ namespace WorkTree.API.Infra.Services;
 public class TokenService : ITokenService
 {
     private readonly IConfiguration _config;
-    private readonly IRefreshTokenRepository _repository;
+
+    // private readonly IRefreshTokenRepository _repository;
     private readonly byte[] _key;
 
 
-    public TokenService(IConfiguration config, IRefreshTokenRepository repository)
-    {
-        _config = config;
-        _key = Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"] ?? "");
-        _repository = repository;
-    }
+    // public TokenService(IConfiguration config, IRefreshTokenRepository repository)
+    // {
+    //     _config = config;
+    //     _key = Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"] ?? "");
+    //     // _repository = repository;
+    // }
 
     public async Task<(string acessToken, string refreshToken)> GenerateTokensAsync(User user)
     {
@@ -35,7 +35,7 @@ public class TokenService : ITokenService
 
         var rt = new RefreshToken(hashed, user.Id, expiresAt);
 
-        await _repository.CreateAsync(rt);
+        // await _repository.CreateAsync(rt);
 
         return (accessToken, refreshToken);
     }
@@ -44,27 +44,28 @@ public class TokenService : ITokenService
     {
         var hashed = HashToken(refreshToken);
 
-        var rtEntity = await _repository.GetTokenByHashedAsync(hashed);
+        // var rtEntity = await _repository.GetTokenByHashedAsync(hashed);
 
-        if (rtEntity == null || rtEntity.IsRevoked || rtEntity.IsExpired)
-            return (false, null, null);
+        // if (rtEntity == null || rtEntity.IsRevoked || rtEntity.IsExpired)
+        //     return (false, null, null);
 
-        rtEntity.Revoke();
+        // rtEntity.Revoke();
 
-        await _repository.UpdateAsync(rtEntity);
+        // await _repository.UpdateAsync(rtEntity);
 
         var newRefreshToken = GenerateRefreshToken();
         var newHashed = HashToken(newRefreshToken);
 
         var expiresAt = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpirationDays"] ?? string.Empty));
 
-        var rt = new RefreshToken(newHashed, rtEntity.UserId, expiresAt);
+        // var rt = new RefreshToken(newHashed, rtEntity.UserId, expiresAt);
 
-        await _repository.CreateAsync(rt);
+        // await _repository.CreateAsync(rt);
 
-        var newAccessToken = GenerateAccessToken(rtEntity.User);
+        // var newAccessToken = GenerateAccessToken(rtEntity.User);
 
-        return (true, newAccessToken, newRefreshToken);
+        // return (true, newAccessToken, newRefreshToken);
+        return (true, "asdasd", newRefreshToken);
     }
 
 
@@ -112,14 +113,14 @@ public class TokenService : ITokenService
     {
         var hashed = HashToken(refreshToken);
 
-        var rtEntity = await _repository.GetTokenByHashedAsync(hashed);
+        // var rtEntity = await _repository.GetTokenByHashedAsync(hashed);
 
-        if (rtEntity is null)
-            return false;
+        // if (rtEntity is null)
+        //     return false;
 
-        rtEntity.Revoke();
+        // rtEntity.Revoke();
 
-        await _repository.UpdateAsync(rtEntity);
+        // await _repository.UpdateAsync(rtEntity);
 
         return true;
     }

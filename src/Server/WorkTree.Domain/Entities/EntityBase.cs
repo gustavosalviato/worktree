@@ -1,4 +1,4 @@
-namespace WorkTree.API.Entities;
+namespace WorkTree.Domain.Entities;
 
 public abstract class EntityBase
 {
