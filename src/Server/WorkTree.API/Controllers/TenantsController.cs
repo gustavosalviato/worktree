@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using WorkTree.API.UseCases.Tenants.Create;
-using WorkTree.API.UseCases.Tenants.Delete;
-using WorkTree.API.UseCases.Tenants.GetById;
-using WorkTree.API.UseCases.Tenants.Update;
+using WorkTree.Application.UseCases.Tenant.Create;
+using WorkTree.Application.UseCases.Tenant.Delete;
+using WorkTree.Application.UseCases.Tenant.GetById;
+using WorkTree.Application.UseCases.Tenant.Update;
 using WorkTree.Communication.Requests;
 using WorkTree.Communication.Requests.Tenants;
 using WorkTree.Communication.Responses;
@@ -19,7 +19,7 @@ public class TenantsController : Controller
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register([FromBody] RequestTenantJson request,
-        [FromServices] CreateTenantUseCase useCase)
+        [FromServices] ICreateTenantUseCase useCase)
     {
         var response = await useCase.Execute(request);
 
@@ -32,7 +32,7 @@ public class TenantsController : Controller
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromRoute] Guid tenantId, [FromBody] RequestUpdateTenantJson request,
-        [FromServices] UpdateTenantUseCase useCase)
+        [FromServices] IUpdateTenantUseCase useCase)
     {
         await useCase.Execute(tenantId, request);
 
@@ -44,7 +44,7 @@ public class TenantsController : Controller
     [Route("{tenantId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete([FromRoute] Guid tenantId, [FromServices] DeleteTenantUseCase useCase)
+    public async Task<IActionResult> Delete([FromRoute] Guid tenantId, [FromServices] IDeleteTenantUseCase useCase)
     {
         await useCase.Execute(tenantId);
 
@@ -55,7 +55,7 @@ public class TenantsController : Controller
     [Route("{tenantId}")]
     [ProducesResponseType(typeof(ResponseTenantJson), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById([FromRoute] Guid tenantId, [FromServices] GetTenantByIdUseCase useCase)
+    public async Task<IActionResult> GetById([FromRoute] Guid tenantId, [FromServices] IGetTenantByIdUseCase useCase)
     {
         var response = await useCase.Execute(tenantId);
 

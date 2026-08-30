@@ -12,4 +12,14 @@
       <ProjectReference Include="..\WorkTree.Domain\WorkTree.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+      <PackageReference Include="Mapster" Version="10.0.12" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="UseCases\Tenant\" />
+    </ItemGroup>
+
 </Project>

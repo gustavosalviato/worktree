@@ -1,10 +1,10 @@
 using WorkTree.Communication.Responses;
 using Microsoft.AspNetCore.Mvc;
-using WorkTree.API.UseCases.Users.Create;
-using WorkTree.API.UseCases.Users.Delete;
-using WorkTree.API.UseCases.Users.GetAll;
-using WorkTree.API.UseCases.Users.GetById;
-using WorkTree.API.UseCases.Users.Update;
+using WorkTree.Application.UseCases.User.Create;
+using WorkTree.Application.UseCases.User.Delete;
+using WorkTree.Application.UseCases.User.GetAll;
+using WorkTree.Application.UseCases.User.GetById;
+using WorkTree.Application.UseCases.User.Update;
 using WorkTree.Communication.Requests.Users;
 using WorkTree.Communication.Responses.Users;
 
@@ -19,7 +19,7 @@ public class UsersController : Controller
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register([FromBody] RequestUserJson request,
-        [FromServices] CreateUserUseCase useCase)
+        [FromServices] ICreateUserUseCase useCase)
     {
         var response = await useCase.Execute(request);
 
@@ -32,7 +32,7 @@ public class UsersController : Controller
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromRoute] Guid userId, [FromBody] RequestUpdateUserJson request,
-        [FromServices] UpdateUserUseCase useCase)
+        [FromServices] IUpdateUserUseCase useCase)
     {
         await useCase.Execute(userId, request);
 
@@ -44,7 +44,7 @@ public class UsersController : Controller
     [Route("{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete([FromRoute] Guid userId, [FromServices] DeleteUserUseCase useCase)
+    public async Task<IActionResult> Delete([FromRoute] Guid userId, [FromServices] IDeleteUserUseCase useCase)
     {
         await useCase.Execute(userId);
 
@@ -55,7 +55,7 @@ public class UsersController : Controller
     [Route("{userId}")]
     [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById([FromRoute] Guid userId, [FromServices] GetUserByIdUseCase useCase)
+    public async Task<IActionResult> GetById([FromRoute] Guid userId, [FromServices] IGetUserByIdUseCase useCase)
     {
         var response = await useCase.Execute(userId);
 
@@ -65,7 +65,7 @@ public class UsersController : Controller
     [HttpGet]
     [ProducesResponseType(typeof(List<ResponseUserJson>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> GetAll([FromServices] GetAllUsersUseCase useCase)
+    public async Task<IActionResult> GetAll([FromServices] IGetAllUsersUseCase useCase)
     {
         var users = await useCase.Execute();
 
