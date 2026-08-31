@@ -26,7 +26,7 @@ public class CreateUserUseCase : ICreateUserUseCase
 
     public async Task<ResponseUserJson> Execute(RequestCreateUserJson requestCreate)
     {
-        await ValidateAndThrowOnFailure(requestCreate);
+        await ValidateAndThrowOnFailures(requestCreate);
 
         var user = requestCreate.Adapt<Domain.Entities.User>();
 
@@ -47,7 +47,7 @@ public class CreateUserUseCase : ICreateUserUseCase
         };
     }
 
-    private async Task ValidateAndThrowOnFailure(RequestCreateUserJson requestCreate)
+    private async Task ValidateAndThrowOnFailures(RequestCreateUserJson requestCreate)
     {
         var validator = new CreateUserValidator();
 
