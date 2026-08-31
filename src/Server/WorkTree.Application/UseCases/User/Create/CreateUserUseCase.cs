@@ -49,7 +49,7 @@ public class CreateUserUseCase : ICreateUserUseCase
 
     private async Task ValidateAndThrowOnFailure(RequestUserJson request)
     {
-        var validator = new RequestUserValidator();
+        var validator = new CreateUserValidator();
 
         var result = await validator.ValidateAsync(request);
 

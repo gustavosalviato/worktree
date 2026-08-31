@@ -3,9 +3,9 @@ using WorkTree.Communication.Requests.Users;
 
 namespace WorkTree.Application.UseCases.User.Create;
 
-public class RequestUserValidator : AbstractValidator<RequestUserJson>
+public class CreateUserValidator : AbstractValidator<RequestUserJson>
 {
-   public RequestUserValidator()
+   public CreateUserValidator()
    {
       RuleFor(user => user.Name).NotEmpty().WithMessage("Name could not be empty.");
       RuleFor(user => user.Email).EmailAddress().WithMessage("Invalid email address.");
