@@ -1,3 +1,4 @@
+using CommonTestUtilities.Requests;
 using WorkTree.Application.UseCases.User.Create;
 using WorkTree.Communication.Requests.Users;
 
@@ -8,13 +9,7 @@ public class CreateUserValidatorTests
     [Fact]
     public void Success()
     {
-        var request = new RequestUserJson
-        {
-            Name = "John Doe",
-            Email = "johndoe@gmail.com",
-            Password = "123456",
-            TenantId = Guid.NewGuid(),
-        };
+        var request = RequestCreateUserJsonBuilder.Build();
 
         var validator = new CreateUserValidator();
 

@@ -18,10 +18,10 @@ public class UsersController : Controller
     [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Register([FromBody] RequestUserJson request,
+    public async Task<IActionResult> Register([FromBody] RequestCreateUserJson requestCreate,
         [FromServices] ICreateUserUseCase useCase)
     {
-        var response = await useCase.Execute(request);
+        var response = await useCase.Execute(requestCreate);
 
         return Created(string.Empty, response);
     }

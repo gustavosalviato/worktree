@@ -3,7 +3,7 @@ using WorkTree.Communication.Requests.Users;
 
 namespace WorkTree.Application.UseCases.User.Create;
 
-public class CreateUserValidator : AbstractValidator<RequestUserJson>
+public class CreateUserValidator : AbstractValidator<RequestCreateUserJson>
 {
    public CreateUserValidator()
    {
