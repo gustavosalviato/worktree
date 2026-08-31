@@ -1,4 +1,5 @@
 using CommonTestUtilities.Requests;
+using Shouldly;
 using WorkTree.Application.UseCases.User.Create;
 using WorkTree.Communication.Requests.Users;
 
@@ -15,6 +16,6 @@ public class CreateUserValidatorTests
 
         var result = validator.Validate(request);
 
-        Assert.True(result.IsValid);
+        result.IsValid.ShouldBeTrue();
     }
 }
