@@ -24,13 +24,13 @@ public class CreateUserUseCase : ICreateUserUseCase
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<ResponseUserJson> Execute(RequestUserJson request)
+    public async Task<ResponseUserJson> Execute(RequestCreateUserJson requestCreate)
     {
-        await ValidateAndThrowOnFailure(request);
+        await ValidateAndThrowOnFailures(requestCreate);
 
-        var user = request.Adapt<Domain.Entities.User>();
+        var user = requestCreate.Adapt<Domain.Entities.User>();
 
-        var passwordHashed = _passwordHasher.HashPassword(request.Password);
+        var passwordHashed = _passwordHasher.HashPassword(requestCreate.Password);
 
         user.ChangePassword(passwordHashed);
 
@@ -47,13 +47,13 @@ public class CreateUserUseCase : ICreateUserUseCase
         };
     }
 
-    private async Task ValidateAndThrowOnFailure(RequestUserJson request)
+    private async Task ValidateAndThrowOnFailures(RequestCreateUserJson requestCreate)
     {
-        var validator = new RequestUserValidator();
+        var validator = new CreateUserValidator();
 
-        var result = await validator.ValidateAsync(request);
+        var result = await validator.ValidateAsync(requestCreate);
 
-        var exists = await _userReadOnlyRepository.FindByEmailAsync(request.Email);
+        var exists = await _userReadOnlyRepository.FindByEmailAsync(requestCreate.Email);
 
         if (exists is not null)
             throw new ConflictErrorException("User with this email already exists.");

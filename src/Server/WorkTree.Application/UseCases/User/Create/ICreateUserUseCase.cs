@@ -5,5 +5,5 @@ namespace WorkTree.Application.UseCases.User.Create;
 
 public interface ICreateUserUseCase
 {
-    Task<ResponseUserJson> Execute(RequestUserJson request);
+    Task<ResponseUserJson> Execute(RequestCreateUserJson requestCreate);
 }
