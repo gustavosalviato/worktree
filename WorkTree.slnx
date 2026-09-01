@@ -10,5 +10,10 @@
     <Project Path="src/Shared/WorkTree.Communication\WorkTree.Communication.csproj" />
     <Project Path="src/Shared/WorkTree.Exceptions\WorkTree.Exceptions.csproj" />
   </Folder>
-  <Folder Name="/tests/" />
+  <Folder Name="/tests/">
+    <Project Path="tests/CommonTestUtilities/CommonTestUtilities.csproj" />
+    <Project Path="tests/UseCaseTests/UseCaseTests.csproj" />
+    <Project Path="tests/Validators.Tests/Validators.Tests.csproj" />
+    <Project Path="tests/WebAPI.Test/WebAPI.Test.csproj" />
+  </Folder>
 </Solution>

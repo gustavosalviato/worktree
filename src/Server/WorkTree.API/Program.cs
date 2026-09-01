@@ -18,16 +18,16 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    var jwtKey = builder.Configuration["Jwt:SecretKey"] ?? "";
-
-    options.TokenValidationParameters = TokenHelper.BuildTokenValidationParameters(builder.Configuration);
-});
+// builder.Services.AddAuthentication(options =>
+// {
+//     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+// }).AddJwtBearer(options =>
+// {
+//     var jwtKey = builder.Configuration["Jwt:SecretKey"] ?? "";
+//
+//     options.TokenValidationParameters = TokenHelper.BuildTokenValidationParameters(builder.Configuration);
+// });
 
 builder.Services.AddAuthorization();
 
@@ -82,4 +82,9 @@ async Task ExecuteMigrations()
     await using var scope = app.Services.CreateAsyncScope();
 
     await DatabaseMigration.ExecuteMigrations(scope.ServiceProvider);
+}
+
+
+public partial class Program
+{
 }
