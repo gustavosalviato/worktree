@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using CommonTestUtilities.Requests;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Shouldly;
 
 namespace WebAPI.Test.User.Create;
@@ -10,19 +9,23 @@ namespace WebAPI.Test.User.Create;
 public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
 {
     private readonly HttpClient _httpClient;
+    private readonly WorkTreeApplicationFactory _factory;
     private const string REQUEST_URI = "/api/users";
 
     public CreateUserTests(WorkTreeApplicationFactory factory)
     {
+        _factory = factory;
         _httpClient = factory.CreateClient();
     }
 
     [Fact]
     public async Task Success()
     {
+        var tenant = await _factory.SeedTenantAsync();
+
         var request = RequestCreateUserJsonBuilder.Build();
 
-        request.TenantId = Guid.Parse("d1012fb8-ad61-4250-b884-986829de35e1");
+        request.TenantId = tenant.Id;
         var response = await _httpClient.PostAsJsonAsync(REQUEST_URI, request);
 
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
@@ -42,9 +45,12 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
     [InlineData("pt-BR")]
     public async Task Validate_ShouldBeAnErrorResponse_WhenNameIsEmpty(string culture)
     {
+        var tenant = await _factory.SeedTenantAsync();
+
         var request = RequestCreateUserJsonBuilder.Build();
+
         request.Name = string.Empty;
-        request.TenantId = Guid.Parse("d1012fb8-ad61-4250-b884-986829de35e1");
+        request.TenantId = tenant.Id;
 
         _httpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
         _httpClient.DefaultRequestHeaders.AcceptLanguage.ParseAdd(culture);

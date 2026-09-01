@@ -1,18 +1,22 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
+using WorkTree.Domain.Entities;
+using WorkTree.Infra.DataAccess;
 
 namespace WebAPI.Test;
 
 public class WorkTreeApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _postgreSqlBuilder;
+    private readonly PostgreSqlContainer _postgreSqlContainer;
 
     public WorkTreeApplicationFactory()
     {
-        _postgreSqlBuilder = new PostgreSqlBuilder("postgres:16").WithDatabase("worktree").Build();
+        _postgreSqlContainer = new PostgreSqlBuilder("postgres:16").WithDatabase("worktree").Build();
     }
+
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -20,20 +24,35 @@ public class WorkTreeApplicationFactory : WebApplicationFactory<Program>, IAsync
         {
             var parameters = new Dictionary<string, string?>
             {
-                ["ConnectionStrings:DefaultConnection"] = _postgreSqlBuilder.GetConnectionString(),
+                ["ConnectionStrings:DefaultConnection"] = _postgreSqlContainer.GetConnectionString(),
             };
             configuration.AddInMemoryCollection(parameters);
         });
     }
 
-
     public async Task InitializeAsync()
     {
-        await _postgreSqlBuilder.StartAsync();
+        await _postgreSqlContainer.StartAsync();
     }
 
-    public Task DisposeAsync()
+
+    public new async Task DisposeAsync()
     {
-        return _postgreSqlBuilder.StopAsync();
+        await _postgreSqlContainer.StopAsync();
+        await _postgreSqlContainer.DisposeAsync();
+    }
+
+
+    public async Task<Tenant> SeedTenantAsync(string name = "Default Tenant", string email = "tenant@test.com")
+    {
+        using var scope = Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<WorkTreeDbContext>();
+
+        var tenant = new Tenant(name, email);
+
+        await dbContext.Tenants.AddAsync(tenant);
+        await dbContext.SaveChangesAsync();
+
+        return tenant;
     }
 }

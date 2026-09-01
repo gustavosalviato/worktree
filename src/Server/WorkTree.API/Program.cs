@@ -18,16 +18,16 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    var jwtKey = builder.Configuration["Jwt:SecretKey"] ?? "";
-
-    options.TokenValidationParameters = TokenHelper.BuildTokenValidationParameters(builder.Configuration);
-});
+// builder.Services.AddAuthentication(options =>
+// {
+//     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+// }).AddJwtBearer(options =>
+// {
+//     var jwtKey = builder.Configuration["Jwt:SecretKey"] ?? "";
+//
+//     options.TokenValidationParameters = TokenHelper.BuildTokenValidationParameters(builder.Configuration);
+// });
 
 builder.Services.AddAuthorization();
 
