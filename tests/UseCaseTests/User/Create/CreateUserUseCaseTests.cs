@@ -33,11 +33,11 @@ public class CreateUserUseCaseTests
         var useCase = CreateUseCase(null, request.TenantId);
 
         var exception = await useCase.Execute(request).ShouldThrowAsync<ErrorOnValidationException>();
-        exception.GetErrors().ShouldSatisfyAllConditions(errors =>
-        {
-            errors.Count.ShouldBe(1);
-            errors.ShouldContain("Name could not be empty.");
-        });
+
+        exception.GetErrors().ShouldSatisfy([
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain("Name could not be empty.")
+        ]);
     }
 
     [Fact]
@@ -49,11 +49,11 @@ public class CreateUserUseCaseTests
         var useCase = CreateUseCase(request.Email, request.TenantId);
 
         var exception = await useCase.Execute(request).ShouldThrowAsync<ConflictErrorException>();
-        exception.GetErrors().ShouldSatisfyAllConditions(errors =>
-        {
-            errors.Count.ShouldBe(1);
-            errors.ShouldContain("User with this email already exists.");
-        });
+
+        exception.GetErrors().ShouldSatisfy([
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain("User with this email already exists.")
+        ]);
     }
 
     [Fact]

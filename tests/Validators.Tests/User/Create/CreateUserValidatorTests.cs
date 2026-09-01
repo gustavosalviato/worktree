@@ -30,12 +30,10 @@ public class CreateUserValidatorTests
 
         var result = validator.Validate(request);
 
-        result.IsValid.ShouldBeFalse();
-        result.Errors.ShouldSatisfyAllConditions(errors =>
-        {
-            errors.Count.ShouldBe(1);
-            errors.ShouldContain(error => error.ErrorMessage.Equals("Name could not be empty."));
-        });
+        result.Errors.ShouldSatisfy([
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals("Name could not be empty.")),
+        ]);
     }
 
     [Fact]
@@ -48,12 +46,11 @@ public class CreateUserValidatorTests
 
         var result = validator.Validate(request);
 
-        result.IsValid.ShouldBeFalse();
-        result.Errors.ShouldSatisfyAllConditions(errors =>
-        {
-            errors.Count.ShouldBe(1);
-            errors.ShouldContain(error => error.ErrorMessage.Equals("Invalid email address."));
-        });
+
+        result.Errors.ShouldSatisfy([
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals("Invalid email address."))
+        ]);
     }
 
     [Fact]
@@ -67,12 +64,11 @@ public class CreateUserValidatorTests
         var result = validator.Validate(request);
 
         result.IsValid.ShouldBeFalse();
-        result.Errors.ShouldSatisfyAllConditions(errors =>
-        {
-            errors.Count.ShouldBe(2);
-            errors.ShouldContain(error => error.ErrorMessage.Equals("Password could not be empty."));
-            errors.ShouldContain(error => error.ErrorMessage.Equals("Password must be at least 6 characters long."));
-        });
+        result.Errors.ShouldSatisfy([
+            e => e.Count.ShouldBe(2),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals("Password could not be empty.")),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals("Password must be at least 6 characters long.")),
+        ]);
     }
 
     [Fact]
@@ -86,10 +82,10 @@ public class CreateUserValidatorTests
         var result = validator.Validate(request);
 
         result.IsValid.ShouldBeFalse();
-        result.Errors.ShouldSatisfyAllConditions(errors =>
-        {
-            errors.Count.ShouldBe(1);
-            errors.ShouldContain(error => error.ErrorMessage.Equals("tenantId could not be empty."));
-        });
+        result.Errors.ShouldSatisfy([
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals("Password could not be empty.")),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals("tenantId could not be empty.")),
+        ]);
     }
 }
