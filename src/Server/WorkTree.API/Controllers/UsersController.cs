@@ -18,6 +18,7 @@ public class UsersController : Controller
     [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Register([FromBody] RequestCreateUserJson requestCreate,
         [FromServices] ICreateUserUseCase useCase)
     {

@@ -13,7 +13,7 @@ public class CreateUserUseCaseTests
     public async Task Success()
     {
         var request = RequestCreateUserJsonBuilder.Build();
-        var useCase = CreateUseCase();
+        var useCase = CreateUseCase(null, request.TenantId);
 
         var result = await useCase.Execute(request);
 
@@ -30,7 +30,7 @@ public class CreateUserUseCaseTests
         var request = RequestCreateUserJsonBuilder.Build();
         request.Name = string.Empty;
 
-        var useCase = CreateUseCase();
+        var useCase = CreateUseCase(null, request.TenantId);
 
         var exception = await useCase.Execute(request).ShouldThrowAsync<ErrorOnValidationException>();
         exception.GetErrors().ShouldSatisfyAllConditions(errors =>
@@ -46,7 +46,7 @@ public class CreateUserUseCaseTests
         var request = RequestCreateUserJsonBuilder.Build();
         request.Name = string.Empty;
 
-        var useCase = CreateUseCase(request.Email);
+        var useCase = CreateUseCase(request.Email, request.TenantId);
 
         var exception = await useCase.Execute(request).ShouldThrowAsync<ConflictErrorException>();
         exception.GetErrors().ShouldSatisfyAllConditions(errors =>
@@ -56,20 +56,47 @@ public class CreateUserUseCaseTests
         });
     }
 
+    [Fact]
+    public async Task Validate_ShouldThrowException_WhenTenantIdIsEmptyOrDoesNotExist()
+    {
+        var request = RequestCreateUserJsonBuilder.Build();
+        request.TenantId = Guid.Empty;
 
-    private CreateUserUseCase CreateUseCase(string? emailThatAlreadyExists = null)
+        var useCase = CreateUseCase();
+
+        var exception = await useCase.Execute(request).ShouldThrowAsync<NotFoundErrorException>();
+        exception.GetErrors().ShouldSatisfy([
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain("Tenant not found."),
+        ]);
+    }
+
+
+    private CreateUserUseCase CreateUseCase
+    (
+        string? emailThatAlreadyExists = null,
+        Guid? tenantIdThatAlreadyExists = null
+    )
     {
         var unitOfWork = UnitOfWorkBuilder.Build();
         var userWriteOnlyRepository = UserWriteOnlyRepositoryBuilder.Build();
         var passwordHasher = new PasswordHasherBuilder().Build();
         var userReadOnlyRepository = new UserReadOnlyRepositoryBuilder();
+        var tenantReadOnlyRepositoryBuilder = new TenantReadOnlyRepositoryBuilder();
 
         if (emailThatAlreadyExists is not null)
-        {
             userReadOnlyRepository.FindByEmailAsync(emailThatAlreadyExists);
-        }
 
-        return new CreateUserUseCase(passwordHasher, userWriteOnlyRepository, userReadOnlyRepository.Build(),
-            unitOfWork);
+
+        if (tenantIdThatAlreadyExists is not null)
+            tenantReadOnlyRepositoryBuilder.FindByIdAsync(tenantIdThatAlreadyExists.Value);
+
+        return new CreateUserUseCase(
+            passwordHasher,
+            userWriteOnlyRepository,
+            userReadOnlyRepository.Build(),
+            tenantReadOnlyRepositoryBuilder.Build(),
+            unitOfWork
+        );
     }
 }

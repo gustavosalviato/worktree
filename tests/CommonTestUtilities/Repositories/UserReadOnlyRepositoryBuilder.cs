@@ -16,7 +16,7 @@ public class UserReadOnlyRepositoryBuilder
     public void FindByEmailAsync(string email)
     {
         _mock.Setup(repository => repository.FindByEmailAsync(email))
-            .ReturnsAsync(new User("Gustavo", "gustavo@codifica.dev", Guid.NewGuid()));
+            .ReturnsAsync(new User("John Doe", "johndoe@gmail.com", Guid.NewGuid()));
     }
 
     public IUserReadOnlyRepository Build() => _mock.Object;
