@@ -20,11 +20,14 @@ public class CreateUserValidatorTests
     }
 
 
-    [Fact]
-    public void Validation_ShouldHaveError_WhenNameIsEmpty()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void Validation_ShouldHaveError_WhenNameIsEmpty(string name)
     {
         var request = RequestCreateUserJsonBuilder.Build();
-        request.Name = string.Empty;
+        request.Name = name;
 
         var validator = new CreateUserValidator();
 
@@ -36,11 +39,13 @@ public class CreateUserValidatorTests
         ]);
     }
 
-    [Fact]
-    public void Validation_ShouldHaveError_WhenEmailIsEmpty()
+    [Theory]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void Validation_ShouldHaveError_WhenEmailIsEmpty(string email)
     {
         var request = RequestCreateUserJsonBuilder.Build();
-        request.Email = string.Empty;
+        request.Email = email;
 
         var validator = new CreateUserValidator();
 

@@ -7,12 +7,12 @@ using Shouldly;
 
 namespace WebAPI.Test.User.Create;
 
-public class CreateUserTests : IClassFixture<WebApplicationFactory<Program>>
+public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
 {
     private readonly HttpClient _httpClient;
     private const string REQUEST_URI = "/api/users";
 
-    public CreateUserTests(WebApplicationFactory<Program> factory)
+    public CreateUserTests(WorkTreeApplicationFactory factory)
     {
         _httpClient = factory.CreateClient();
     }
@@ -37,11 +37,17 @@ public class CreateUserTests : IClassFixture<WebApplicationFactory<Program>>
         responseData.RootElement.GetProperty("tenantId").GetString().ShouldBe(request.TenantId.ToString());
     }
 
-    [Fact]
-    public async Task Validate_ShouldBeAnErrorResponse_WhenNameIsEmpty()
+    [Theory]
+    [InlineData("en")]
+    [InlineData("pt-BR")]
+    public async Task Validate_ShouldBeAnErrorResponse_WhenNameIsEmpty(string culture)
     {
         var request = RequestCreateUserJsonBuilder.Build();
         request.Name = string.Empty;
+        request.TenantId = Guid.Parse("d1012fb8-ad61-4250-b884-986829de35e1");
+
+        _httpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
+        _httpClient.DefaultRequestHeaders.AcceptLanguage.ParseAdd(culture);
 
         var response = await _httpClient.PostAsJsonAsync(REQUEST_URI, request);
 
@@ -52,6 +58,7 @@ public class CreateUserTests : IClassFixture<WebApplicationFactory<Program>>
         var responseData = await JsonDocument.ParseAsync(responseBody);
 
         var errors = responseData.RootElement.GetProperty("errors").EnumerateArray();
+
         errors.ShouldSatisfyAllConditions(errorsList =>
         {
             errorsList.Count().ShouldBe(1);
