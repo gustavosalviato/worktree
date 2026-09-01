@@ -20,40 +20,42 @@ public class CreateUserValidatorTests
     }
 
 
-    [Fact]
-    public void Validation_ShouldHaveError_WhenNameIsEmpty()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void Validation_ShouldHaveError_WhenNameIsEmpty(string name)
     {
         var request = RequestCreateUserJsonBuilder.Build();
-        request.Name = string.Empty;
+        request.Name = name;
 
         var validator = new CreateUserValidator();
 
         var result = validator.Validate(request);
 
-        result.IsValid.ShouldBeFalse();
-        result.Errors.ShouldSatisfyAllConditions(errors =>
-        {
-            errors.Count.ShouldBe(1);
-            errors.ShouldContain(error => error.ErrorMessage.Equals("Name could not be empty."));
-        });
+        result.Errors.ShouldSatisfy([
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals("Name could not be empty.")),
+        ]);
     }
 
-    [Fact]
-    public void Validation_ShouldHaveError_WhenEmailIsEmpty()
+    [Theory]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void Validation_ShouldHaveError_WhenEmailIsEmpty(string email)
     {
         var request = RequestCreateUserJsonBuilder.Build();
-        request.Email = string.Empty;
+        request.Email = email;
 
         var validator = new CreateUserValidator();
 
         var result = validator.Validate(request);
 
-        result.IsValid.ShouldBeFalse();
-        result.Errors.ShouldSatisfyAllConditions(errors =>
-        {
-            errors.Count.ShouldBe(1);
-            errors.ShouldContain(error => error.ErrorMessage.Equals("Invalid email address."));
-        });
+
+        result.Errors.ShouldSatisfy([
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals("Invalid email address."))
+        ]);
     }
 
     [Fact]
@@ -67,12 +69,11 @@ public class CreateUserValidatorTests
         var result = validator.Validate(request);
 
         result.IsValid.ShouldBeFalse();
-        result.Errors.ShouldSatisfyAllConditions(errors =>
-        {
-            errors.Count.ShouldBe(2);
-            errors.ShouldContain(error => error.ErrorMessage.Equals("Password could not be empty."));
-            errors.ShouldContain(error => error.ErrorMessage.Equals("Password must be at least 6 characters long."));
-        });
+        result.Errors.ShouldSatisfy([
+            e => e.Count.ShouldBe(2),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals("Password could not be empty.")),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals("Password must be at least 6 characters long.")),
+        ]);
     }
 
     [Fact]
@@ -86,10 +87,9 @@ public class CreateUserValidatorTests
         var result = validator.Validate(request);
 
         result.IsValid.ShouldBeFalse();
-        result.Errors.ShouldSatisfyAllConditions(errors =>
-        {
-            errors.Count.ShouldBe(1);
-            errors.ShouldContain(error => error.ErrorMessage.Equals("tenantId could not be empty."));
-        });
+        result.Errors.ShouldSatisfy([
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals("tenantId could not be empty.")),
+        ]);
     }
 }
