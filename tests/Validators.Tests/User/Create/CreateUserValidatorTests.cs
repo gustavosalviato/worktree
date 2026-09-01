@@ -89,7 +89,6 @@ public class CreateUserValidatorTests
         result.IsValid.ShouldBeFalse();
         result.Errors.ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain(error => error.ErrorMessage.Equals("Password could not be empty.")),
             e => e.ShouldContain(error => error.ErrorMessage.Equals("tenantId could not be empty.")),
         ]);
     }

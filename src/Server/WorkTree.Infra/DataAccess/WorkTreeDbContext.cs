@@ -1,9 +1,11 @@
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using WorkTree.Domain.Entities;
 
+[assembly: InternalsVisibleTo("WebAPI.Test")]
 namespace WorkTree.Infra.DataAccess;
 
-public class WorkTreeDbContext : DbContext
+internal class WorkTreeDbContext : DbContext
 {
     public WorkTreeDbContext(DbContextOptions options) : base(options)
     {
