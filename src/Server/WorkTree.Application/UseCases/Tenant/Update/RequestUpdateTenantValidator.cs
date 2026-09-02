@@ -1,5 +1,6 @@
 using FluentValidation;
 using WorkTree.Communication.Requests;
+using WorkTree.Exceptions;
 
 namespace WorkTree.Application.UseCases.Tenant.Update;
 
@@ -7,6 +8,6 @@ public class RequestUpdateTenantValidator : AbstractValidator<RequestUpdateTenan
 {
     public RequestUpdateTenantValidator()
     {
-        RuleFor(user => user.Name).NotEmpty().WithMessage("Name could not be empty.");
+        RuleFor(user => user.Name).NotEmpty().WithMessage(ResourceMessagesException.VALIDATION_NAME_REQUIRED);
     }
 }

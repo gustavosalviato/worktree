@@ -1,6 +1,7 @@
 using WorkTree.Communication.Requests.Users;
 using WorkTree.Domain.Repositories;
 using WorkTree.Domain.Repositories.User;
+using WorkTree.Exceptions;
 using WorkTree.Exceptions.ExceptionsBase;
 
 namespace WorkTree.Application.UseCases.User.Update;
@@ -26,7 +27,7 @@ public class UpdateUserUseCase : IUpdateUserUseCase
         var user = await _userReadOnlyRepository.FindByIdAsync(userId);
 
         if (user is null)
-            throw new NotFoundErrorException("User not found.");
+            throw new NotFoundErrorException(ResourceMessagesException.USER_NOT_FOUND);
 
         user.Update(request.Name);
 
