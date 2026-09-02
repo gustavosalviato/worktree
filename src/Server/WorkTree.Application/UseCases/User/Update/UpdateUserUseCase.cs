@@ -22,7 +22,7 @@ public class UpdateUserUseCase : IUpdateUserUseCase
 
     public async Task Execute(Guid userId, RequestUpdateUserJson request)
     {
-        ValidateAndThrowOnFailure(request);
+        ValidateAndThrowOnFailures(request);
 
         var user = await _userReadOnlyRepository.FindByIdAsync(userId);
 
@@ -36,7 +36,7 @@ public class UpdateUserUseCase : IUpdateUserUseCase
         await _unitOfWork.CommitAsync();
     }
 
-    private void ValidateAndThrowOnFailure(RequestUpdateUserJson request)
+    private void ValidateAndThrowOnFailures(RequestUpdateUserJson request)
     {
         var validator = new RequestUpdateUserValidator();
 

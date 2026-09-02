@@ -1,7 +1,6 @@
 using CommonTestUtilities.Requests;
 using Shouldly;
 using WorkTree.Application.UseCases.User.Create;
-using WorkTree.Communication.Requests.Users;
 using WorkTree.Exceptions;
 
 namespace Validators.Tests.User.Create;
