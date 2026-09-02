@@ -3,6 +3,7 @@ using CommonTestUtilities.Requests;
 using CommonTestUtilities.Security;
 using Shouldly;
 using WorkTree.Application.UseCases.User.Create;
+using WorkTree.Exceptions;
 using WorkTree.Exceptions.ExceptionsBase;
 
 namespace UseCaseTests.User.Create;
@@ -36,7 +37,7 @@ public class CreateUserUseCaseTests
 
         exception.GetErrors().ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain("Name could not be empty.")
+            e => e.ShouldContain(ResourceMessagesException.VALIDATION_NAME_REQUIRED)
         ]);
     }
 
@@ -52,7 +53,7 @@ public class CreateUserUseCaseTests
 
         exception.GetErrors().ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain("User with this email already exists.")
+            e => e.ShouldContain(ResourceMessagesException.USER_WITH_EMAIL_ALREADY_EXISTS)
         ]);
     }
 
@@ -67,7 +68,7 @@ public class CreateUserUseCaseTests
         var exception = await useCase.Execute(request).ShouldThrowAsync<NotFoundErrorException>();
         exception.GetErrors().ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain("Tenant not found."),
+            e => e.ShouldContain(ResourceMessagesException.ORGANIZATION_NOT_FOUND),
         ]);
     }
 

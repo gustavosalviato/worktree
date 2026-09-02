@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -5,7 +6,9 @@ using CommonTestUtilities.Requests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
+using WebAPI.Test.InlineData;
 using WorkTree.Domain.Entities;
+using WorkTree.Exceptions;
 using WorkTree.Infra.DataAccess;
 
 namespace WebAPI.Test.User.Create;
@@ -65,13 +68,13 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
     }
 
     [Theory]
-    [InlineData("en")]
-    [InlineData("pt-BR")]
+    [ClassData(typeof(CultureInlineData))]
     public async Task Validate_ShouldBeAnErrorResponse_WhenNameIsEmpty(string culture)
     {
         var tenant = await SeedTenantAsync();
 
         var request = RequestCreateUserJsonBuilder.Build();
+
 
         request.Name = string.Empty;
         request.TenantId = tenant.Id;
@@ -89,11 +92,16 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
 
         var errors = responseData.RootElement.GetProperty("errors").EnumerateArray();
 
+        var expectedErrorMessage =
+            ResourceMessagesException.ResourceManager.GetString("VALIDATION_NAME_REQUIRED", new CultureInfo(culture));
+
         errors.ShouldSatisfyAllConditions(errorsList =>
         {
             errorsList.Count().ShouldBe(1);
-            errorsList.ShouldContain(error => error.GetString()!.Equals("Name could not be empty."));
+            errorsList.ShouldContain(error =>
+                error.GetString()!.Equals(expectedErrorMessage));
         });
+
 
         var userExists =
             await _dbContext.Users.AnyAsync(user => user.Name.Equals(request.Name) && user.Email.Equals(request.Email));
