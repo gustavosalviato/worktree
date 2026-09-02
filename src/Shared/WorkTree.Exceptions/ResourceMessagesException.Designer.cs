@@ -93,5 +93,10 @@ namespace WorkTree.Exceptions {
                 return ResourceManager.GetString("USER_NOT_FOUND", resourceCulture);
             }
         }
+        public static string ORGANIZATION_WITH_EMAIL_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("ORGANIZATION_WITH_EMAIL_ALREADY_EXISTS", resourceCulture);
+            }
+        }
     }
 }

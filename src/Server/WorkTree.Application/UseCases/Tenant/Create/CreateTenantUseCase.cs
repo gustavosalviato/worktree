@@ -3,6 +3,7 @@ using WorkTree.Communication.Requests.Tenants;
 using WorkTree.Communication.Responses.Tenants;
 using WorkTree.Domain.Repositories;
 using WorkTree.Domain.Repositories.Tenant;
+using WorkTree.Exceptions;
 using WorkTree.Exceptions.ExceptionsBase;
 
 namespace WorkTree.Application.UseCases.Tenant.Create;
@@ -49,7 +50,7 @@ public class CreateTenantUseCase : ICreateTenantUseCase
         var exists = await _tenantReadOnlyRepository.FindByEmailAsync(request.Email);
 
         if (exists is not null)
-            throw new ConflictErrorException("A tenant with this email already exists.");
+            throw new ConflictErrorException(ResourceMessagesException.ORGANIZATION_WITH_EMAIL_ALREADY_EXISTS);
 
         if (!result.IsValid)
         {

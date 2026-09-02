@@ -45,4 +45,7 @@
     <data name="USER_NOT_FOUND" xml:space="preserve">
         <value>Usuário não encontrado.</value>
     </data>
+    <data name="ORGANIZATION_WITH_EMAIL_ALREADY_EXISTS" xml:space="preserve">
+        <value>Uma organização com esse e-mail já existe.</value>
+    </data>
 </root>
