@@ -7,7 +7,7 @@ public class User : EntityBase
     public string PasswordHash { get; private set; } = string.Empty;
     public Guid TenantId { get; private set; }
 
-    private User()
+    public User()
     {
     }
 

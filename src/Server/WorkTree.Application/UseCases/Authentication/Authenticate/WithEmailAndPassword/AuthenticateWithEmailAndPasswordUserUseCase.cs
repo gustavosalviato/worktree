@@ -12,7 +12,7 @@ public class AuthenticateWithEmailAndPasswordUserUseCase : IAuthenticateWithEmai
     private readonly IUserReadOnlyRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
 
-
+    
     public AuthenticateWithEmailAndPasswordUserUseCase(IUserReadOnlyRepository userRepository,
         IPasswordHasher passwordHasher)
     {
@@ -20,18 +20,18 @@ public class AuthenticateWithEmailAndPasswordUserUseCase : IAuthenticateWithEmai
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<ResponseAuthenticateUserJson> Execute(RequestAuthenticateUserJson request)
+    public async Task<ResponseAuthenticateUserJson> Execute(RequestAuthenticateJson request)
     {
         var user = await _userRepository.FindByEmailAsync(request.Email);
 
         if (user is null)
-            throw new InvalidCredentialsError(ResourceMessagesException.INVALID_CREDENTIALS);
+            throw new InvalidCredentialsException(ResourceMessagesException.INVALID_CREDENTIALS);
 
 
         var doesPasswordMatches = _passwordHasher.VerifyPassword(request.Password, user.PasswordHash);
 
         if (!doesPasswordMatches)
-            throw new InvalidCredentialsError(ResourceMessagesException.INVALID_CREDENTIALS);
+            throw new InvalidCredentialsException(ResourceMessagesException.INVALID_CREDENTIALS);
 
 
         var response = new ResponseAuthenticateUserJson

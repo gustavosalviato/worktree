@@ -2,9 +2,9 @@ using System.Net;
 
 namespace WorkTree.Exceptions.ExceptionsBase;
 
-public class InvalidCredentialsError : ExceptionBase
+public class InvalidCredentialsException : ExceptionBase
 {
-    public InvalidCredentialsError(string errorMessage) : base(errorMessage)
+    public InvalidCredentialsException(string errorMessage) : base(errorMessage)
     {
     }
 

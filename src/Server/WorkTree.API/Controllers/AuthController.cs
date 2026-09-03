@@ -17,7 +17,7 @@ public class AuthController : Controller
     [ProducesResponseType(typeof(ResponseAuthenticateUserJson), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> Login([FromBody] RequestAuthenticateUserJson request,
+    public async Task<IActionResult> Login([FromBody] RequestAuthenticateJson request,
         [FromServices] IAuthenticateWithEmailAndPasswordUserUseCase useCase)
     {
         var response = await useCase.Execute(request);

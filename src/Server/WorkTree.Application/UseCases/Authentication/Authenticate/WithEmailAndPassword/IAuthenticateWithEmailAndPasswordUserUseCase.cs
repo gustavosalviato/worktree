@@ -5,5 +5,5 @@ namespace WorkTree.Application.UseCases.Authentication.Authenticate.WithEmailAnd
 
 public interface IAuthenticateWithEmailAndPasswordUserUseCase
 {
-    Task<ResponseAuthenticateUserJson> Execute(RequestAuthenticateUserJson request);
+    Task<ResponseAuthenticateUserJson> Execute(RequestAuthenticateJson request);
 }
