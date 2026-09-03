@@ -23,7 +23,7 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
     public CreateUserTests(WorkTreeApplicationFactory factory)
     {
         _httpClient = factory.CreateClient();
-
+        
         var scope = factory.Services.CreateScope();
         _dbContext = scope.ServiceProvider.GetRequiredService<WorkTreeDbContext>();
     }

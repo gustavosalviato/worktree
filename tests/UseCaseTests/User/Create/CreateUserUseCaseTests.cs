@@ -53,7 +53,7 @@ public class CreateUserUseCaseTests
     [Fact]
     public async Task Validate_ShouldThrowException_WhenEmailAlreadyExists()
     {
-        var user = UserBuilder.Build();
+        var (user, _) = UserBuilder.Build();
         var tenant = TenantBuilder.Build();
 
         var request = RequestCreateUserJsonBuilder.Build();
