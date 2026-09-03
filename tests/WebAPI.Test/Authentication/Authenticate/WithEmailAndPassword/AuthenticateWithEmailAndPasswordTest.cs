@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using CommonTestUtilities.Requests;
 using Shouldly;
@@ -11,16 +10,14 @@ using WorkTree.Exceptions;
 
 namespace WebAPI.Test.Authentication.Authenticate.WithEmailAndPassword;
 
-public class AuthenticateWithEmailAndPasswordTest : IClassFixture<WorkTreeApplicationFactory>
+public class AuthenticateWithEmailAndPasswordTest : BaseIntegrationTest
 {
-    private readonly HttpClient _httpClient;
     private readonly UserIdentityManager _firstUser;
 
-    private const string REQUEST_URI = "/api/auth/login";
+    private const string RequestUri = "/api/auth/login";
 
-    public AuthenticateWithEmailAndPasswordTest(WorkTreeApplicationFactory factory)
+    public AuthenticateWithEmailAndPasswordTest(WorkTreeApplicationFactory factory) : base(factory)
     {
-        _httpClient = factory.CreateClient();
         _firstUser = factory.FirstUser;
     }
 
@@ -33,7 +30,7 @@ public class AuthenticateWithEmailAndPasswordTest : IClassFixture<WorkTreeApplic
             Password = _firstUser.GetPassword(),
         };
 
-        var response = await _httpClient.PostAsJsonAsync(REQUEST_URI, request);
+        var response = await Post(RequestUri, request);
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
@@ -50,10 +47,7 @@ public class AuthenticateWithEmailAndPasswordTest : IClassFixture<WorkTreeApplic
     {
         var request = RequestAuthenticateJsonBuilder.Build();
 
-        _httpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
-        _httpClient.DefaultRequestHeaders.AcceptLanguage.ParseAdd(culture);
-
-        var response = await _httpClient.PostAsJsonAsync(REQUEST_URI, request);
+        var response = await Post(RequestUri, request, culture);
 
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 
