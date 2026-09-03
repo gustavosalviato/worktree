@@ -1,34 +1,24 @@
 using System.Globalization;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using CommonTestUtilities.Requests;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using WebAPI.Test.InlineData;
 using WebAPI.Test.Resources;
 using WorkTree.Exceptions;
-using WorkTree.Infra.DataAccess;
 
 namespace WebAPI.Test.User.Create;
 
-public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
+public class CreateUserTests : BaseIntegrationTest
 {
-    private readonly HttpClient _httpClient;
-    private readonly WorkTreeDbContext _dbContext;
+    private const string RequestUri = "/api/users";
+
     private readonly TenantIdentityManager _firstTenant;
 
-
-    private const string REQUEST_URI = "/api/users";
-
-    public CreateUserTests(WorkTreeApplicationFactory factory)
+    public CreateUserTests(WorkTreeApplicationFactory factory) : base(factory)
     {
-        _httpClient = factory.CreateClient();
         _firstTenant = factory.FirstTenant;
-
-        var scope = factory.Services.CreateScope();
-        _dbContext = scope.ServiceProvider.GetRequiredService<WorkTreeDbContext>();
     }
 
     [Fact]
@@ -37,7 +27,8 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
         var request = RequestCreateUserJsonBuilder.Build();
 
         request.TenantId = _firstTenant.GetId();
-        var response = await _httpClient.PostAsJsonAsync(REQUEST_URI, request);
+
+        var response = await Post(RequestUri, request);
 
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
@@ -50,7 +41,7 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
         responseData.RootElement.GetProperty("tenantId").GetString().ShouldBe(request.TenantId.ToString());
 
         var userExists =
-            await _dbContext.Users.AnyAsync(user => user.Name.Equals(request.Name) && user.Email.Equals(request.Email));
+            await dbContext.Users.AnyAsync(user => user.Name.Equals(request.Name) && user.Email.Equals(request.Email));
 
         userExists.ShouldBeTrue();
     }
@@ -61,14 +52,10 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
     {
         var request = RequestCreateUserJsonBuilder.Build();
 
-
         request.Name = string.Empty;
         request.TenantId = _firstTenant.GetId();
 
-        _httpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
-        _httpClient.DefaultRequestHeaders.AcceptLanguage.ParseAdd(culture);
-
-        var response = await _httpClient.PostAsJsonAsync(REQUEST_URI, request);
+        var response = await Post(RequestUri, request, culture);
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
@@ -90,7 +77,7 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
 
 
         var userExists =
-            await _dbContext.Users.AnyAsync(user => user.Name.Equals(request.Name) && user.Email.Equals(request.Email));
+            await dbContext.Users.AnyAsync(user => user.Name.Equals(request.Name) && user.Email.Equals(request.Email));
 
         userExists.ShouldBeFalse();
     }
