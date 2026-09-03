@@ -28,7 +28,7 @@ internal sealed class UserRepository : IUserWriteOnlyRepository, IUserReadOnlyRe
 
     public async Task<User?> FindByEmailAsync(string email)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
 
         return user;
     }

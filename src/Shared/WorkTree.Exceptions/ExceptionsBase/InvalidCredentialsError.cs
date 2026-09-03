@@ -13,5 +13,5 @@ public class InvalidCredentialsError : ExceptionBase
         return new List<string> { Message };
     }
 
-    public override HttpStatusCode GetHttpStatusCode() => HttpStatusCode.BadRequest;
+    public override HttpStatusCode GetHttpStatusCode() => HttpStatusCode.Unauthorized;
 }

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using WorkTree.Application.UseCases.Authentication.Authenticate.WithEmailAndPassword;
 using WorkTree.Application.UseCases.Tenant.Create;
 using WorkTree.Application.UseCases.Tenant.Delete;
 using WorkTree.Application.UseCases.Tenant.GetById;
@@ -27,6 +28,9 @@ public static class DependencyInjectionExtension
             services.AddScoped<IUpdateTenantUseCase, UpdateTenantUseCase>();
             services.AddScoped<IDeleteTenantUseCase, DeleteTenantUseCase>();
             services.AddScoped<IGetTenantByIdUseCase, GetTenantByIdUseCase>();
+
+            services
+                .AddScoped<IAuthenticateWithEmailAndPasswordUserUseCase, AuthenticateWithEmailAndPasswordUserUseCase>();
         }
     }
 }

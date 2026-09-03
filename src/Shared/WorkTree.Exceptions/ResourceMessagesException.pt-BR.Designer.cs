@@ -104,5 +104,11 @@ namespace WorkTree.Exceptions {
                 return ResourceManager.GetString("ORGANIZATION_WITH_EMAIL_ALREADY_EXISTS", resourceCulture);
             }
         }
+        
+        internal static string INVALID_CREDENTIALS {
+            get {
+                return ResourceManager.GetString("INVALID_CREDENTIALS", resourceCulture);
+            }
+        }
     }
 }

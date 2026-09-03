@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using WorkTree.API.UseCases.Session.Authenticate;
 using WorkTree.API.UseCases.Session.Logout;
 using WorkTree.API.UseCases.Session.RefreshToken;
+using WorkTree.Application.UseCases.Authentication.Authenticate.WithEmailAndPassword;
 using WorkTree.Communication.Requests.Auth;
 using WorkTree.Communication.Responses;
 using WorkTree.Communication.Responses.Auth;
@@ -14,14 +14,15 @@ public class AuthController : Controller
 {
     [HttpPost]
     [Route("login")]
-    [ProducesResponseType(typeof(ResponseAuthenticateUserJson), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ResponseAuthenticateUserJson), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] RequestAuthenticateUserJson request,
-        [FromServices] AuthenticateUserUseCase useCase)
+        [FromServices] IAuthenticateWithEmailAndPasswordUserUseCase useCase)
     {
         var response = await useCase.Execute(request);
 
-        return Created(string.Empty, response);
+        return Ok(response);
     }
 
 

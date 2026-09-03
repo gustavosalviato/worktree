@@ -48,4 +48,7 @@
     <data name="ORGANIZATION_WITH_EMAIL_ALREADY_EXISTS" xml:space="preserve">
         <value>A organization with this email already exists.</value>
     </data>
+    <data name="INVALID_CREDENTIALS" xml:space="preserve">
+        <value>Invalid credentials.</value>
+    </data>
 </root>
