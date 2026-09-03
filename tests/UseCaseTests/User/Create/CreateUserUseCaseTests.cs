@@ -1,8 +1,10 @@
+using CommonTestUtilities.Entities;
 using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Requests;
 using CommonTestUtilities.Security;
 using Shouldly;
 using WorkTree.Application.UseCases.User.Create;
+using WorkTree.Domain.Entities;
 using WorkTree.Exceptions;
 using WorkTree.Exceptions.ExceptionsBase;
 
@@ -13,8 +15,12 @@ public class CreateUserUseCaseTests
     [Fact]
     public async Task Success()
     {
+        var tenant = TenantBuilder.Build();
         var request = RequestCreateUserJsonBuilder.Build();
-        var useCase = CreateUseCase(null, request.TenantId);
+
+        request.TenantId = tenant.Id;
+
+        var useCase = CreateUseCase(null, tenant);
 
         var result = await useCase.Execute(request);
 
@@ -28,10 +34,13 @@ public class CreateUserUseCaseTests
     [Fact]
     public async Task Validate_ShouldThrowException_WhenNameIsEmpty()
     {
+        var tenant = TenantBuilder.Build();
         var request = RequestCreateUserJsonBuilder.Build();
-        request.Name = string.Empty;
 
-        var useCase = CreateUseCase(null, request.TenantId);
+        request.Name = string.Empty;
+        request.TenantId = tenant.Id;
+
+        var useCase = CreateUseCase(tenant: tenant);
 
         var exception = await useCase.Execute(request).ShouldThrowAsync<ErrorOnValidationException>();
 
@@ -44,10 +53,15 @@ public class CreateUserUseCaseTests
     [Fact]
     public async Task Validate_ShouldThrowException_WhenEmailAlreadyExists()
     {
-        var request = RequestCreateUserJsonBuilder.Build();
-        request.Name = string.Empty;
+        var user = UserBuilder.Build();
+        var tenant = TenantBuilder.Build();
 
-        var useCase = CreateUseCase(request.Email, request.TenantId);
+        var request = RequestCreateUserJsonBuilder.Build();
+
+        request.Email = user.Email;
+        request.TenantId = tenant.Id;
+
+        var useCase = CreateUseCase(user, tenant);
 
         var exception = await useCase.Execute(request).ShouldThrowAsync<ConflictErrorException>();
 
@@ -73,10 +87,10 @@ public class CreateUserUseCaseTests
     }
 
 
-    private CreateUserUseCase CreateUseCase
+    private static CreateUserUseCase CreateUseCase
     (
-        string? emailThatAlreadyExists = null,
-        Guid? tenantIdThatAlreadyExists = null
+        WorkTree.Domain.Entities.User? user = null,
+        Tenant? tenant = null
     )
     {
         var unitOfWork = UnitOfWorkBuilder.Build();
@@ -85,12 +99,12 @@ public class CreateUserUseCaseTests
         var userReadOnlyRepository = new UserReadOnlyRepositoryBuilder();
         var tenantReadOnlyRepositoryBuilder = new TenantReadOnlyRepositoryBuilder();
 
-        if (emailThatAlreadyExists is not null)
-            userReadOnlyRepository.FindByEmailAsync(emailThatAlreadyExists);
+        if (user is not null)
+            userReadOnlyRepository.FindByEmailAsync(user);
 
 
-        if (tenantIdThatAlreadyExists is not null)
-            tenantReadOnlyRepositoryBuilder.FindByIdAsync(tenantIdThatAlreadyExists.Value);
+        if (tenant is not null)
+            tenantReadOnlyRepositoryBuilder.FindByIdAsync(tenant);
 
         return new CreateUserUseCase(
             passwordHasher,
