@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - develop
-    
+
 jobs:
   build-and-test:
     name: Build & Tests
@@ -13,18 +13,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Installing .NET SDK
         uses: actions/setup-dotnet@v4
-      
+
       - name: Build
         run: dotnet build
 
       - name: Tests
-        run: dotnet test --settings tests/coverlet.runsettings
-      
-      - name: Publish Code Coverage
-        uses: actions/upload-artifact@v4
+        run: dotnet test --collect:"XPlat Code Coverage"
+
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          name: code-coverage
-          path: '**/coverage.cobertura.xml'
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: gustavosalviato/worktree
+          

@@ -5,6 +5,7 @@ using WorkTree.Domain.Repositories;
 using WorkTree.Domain.Repositories.Tenant;
 using WorkTree.Domain.Repositories.User;
 using WorkTree.Domain.Security.PasswordHashing;
+using WorkTree.Exceptions;
 using WorkTree.Exceptions.ExceptionsBase;
 
 namespace WorkTree.Application.UseCases.User.Create;
@@ -66,13 +67,13 @@ public class CreateUserUseCase : ICreateUserUseCase
 
         if (tenantExists is null)
         {
-            throw new NotFoundErrorException("Tenant not found.");
+            throw new NotFoundErrorException(ResourceMessagesException.ORGANIZATION_NOT_FOUND);
         }
 
         var exists = await _userReadOnlyRepository.FindByEmailAsync(requestCreate.Email);
 
         if (exists is not null)
-            throw new ConflictErrorException("User with this email already exists.");
+            throw new ConflictErrorException(ResourceMessagesException.USER_WITH_EMAIL_ALREADY_EXISTS);
 
         if (!result.IsValid)
         {

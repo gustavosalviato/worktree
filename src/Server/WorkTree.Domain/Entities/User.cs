@@ -7,7 +7,7 @@ public class User : EntityBase
     public string PasswordHash { get; private set; } = string.Empty;
     public Guid TenantId { get; private set; }
 
-    private User()
+    public User()
     {
     }
 
@@ -27,6 +27,12 @@ public class User : EntityBase
     public void Update(string name)
     {
         Name = name;
+        Touch();
+    }
+
+    public void ChangeTenantId(Guid tenantId)
+    {
+        TenantId = tenantId;
         Touch();
     }
 

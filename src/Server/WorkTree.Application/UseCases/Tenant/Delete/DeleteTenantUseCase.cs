@@ -1,6 +1,6 @@
 using WorkTree.Domain.Repositories;
 using WorkTree.Domain.Repositories.Tenant;
-using WorkTree.Domain.Repositories.User;
+using WorkTree.Exceptions;
 using WorkTree.Exceptions.ExceptionsBase;
 
 namespace WorkTree.Application.UseCases.Tenant.Delete;
@@ -26,7 +26,7 @@ public class DeleteTenantUseCase : IDeleteTenantUseCase
         var tenant = await _tenantReadOnlyRepository.FindByIdAsync(tenantId);
 
         if (tenant is null)
-            throw new NotFoundErrorException("Tenant not found");
+            throw new NotFoundErrorException(ResourceMessagesException.ORGANIZATION_NOT_FOUND);
 
         _tenantWriteOnlyRepository.Delete(tenant);
 

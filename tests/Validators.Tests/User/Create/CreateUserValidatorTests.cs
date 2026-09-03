@@ -1,7 +1,7 @@
 using CommonTestUtilities.Requests;
 using Shouldly;
 using WorkTree.Application.UseCases.User.Create;
-using WorkTree.Communication.Requests.Users;
+using WorkTree.Exceptions;
 
 namespace Validators.Tests.User.Create;
 
@@ -35,7 +35,7 @@ public class CreateUserValidatorTests
 
         result.Errors.ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain(error => error.ErrorMessage.Equals("Name could not be empty.")),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_NAME_REQUIRED)),
         ]);
     }
 
@@ -54,7 +54,7 @@ public class CreateUserValidatorTests
 
         result.Errors.ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain(error => error.ErrorMessage.Equals("Invalid email address."))
+            e => e.ShouldContain(error => error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_EMAIL_REQUIRED))
         ]);
     }
 
@@ -70,9 +70,26 @@ public class CreateUserValidatorTests
 
         result.IsValid.ShouldBeFalse();
         result.Errors.ShouldSatisfy([
-            e => e.Count.ShouldBe(2),
-            e => e.ShouldContain(error => error.ErrorMessage.Equals("Password could not be empty.")),
-            e => e.ShouldContain(error => error.ErrorMessage.Equals("Password must be at least 6 characters long.")),
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_PASSWORD_REQUIRED)),
+        ]);
+    }
+    
+    [Theory]
+    [InlineData("1234565")]
+    public void Validation_ShouldHaveError_WhenPasswordDoesNotHaveMinimumLength(string password)
+    {
+        var request = RequestCreateUserJsonBuilder.Build();
+        request.Password = password;
+
+        var validator = new CreateUserValidator();
+
+        var result = validator.Validate(request);
+
+        result.IsValid.ShouldBeFalse();
+        result.Errors.ShouldSatisfy([
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_PASSWORD_MINIMUM_LENGTH)),
         ]);
     }
 
@@ -89,7 +106,7 @@ public class CreateUserValidatorTests
         result.IsValid.ShouldBeFalse();
         result.Errors.ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain(error => error.ErrorMessage.Equals("tenantId could not be empty.")),
+            e => e.ShouldContain(error => error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_TENANT_REQUIRED)),
         ]);
     }
 }

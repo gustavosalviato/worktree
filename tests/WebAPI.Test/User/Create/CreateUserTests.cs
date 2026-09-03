@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -5,7 +6,9 @@ using CommonTestUtilities.Requests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
-using WorkTree.Domain.Entities;
+using WebAPI.Test.InlineData;
+using WebAPI.Test.Resources;
+using WorkTree.Exceptions;
 using WorkTree.Infra.DataAccess;
 
 namespace WebAPI.Test.User.Create;
@@ -14,37 +17,26 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
 {
     private readonly HttpClient _httpClient;
     private readonly WorkTreeDbContext _dbContext;
+    private readonly TenantIdentityManager _firstTenant;
+
 
     private const string REQUEST_URI = "/api/users";
 
     public CreateUserTests(WorkTreeApplicationFactory factory)
     {
         _httpClient = factory.CreateClient();
+        _firstTenant = factory.FirstTenant;
 
         var scope = factory.Services.CreateScope();
         _dbContext = scope.ServiceProvider.GetRequiredService<WorkTreeDbContext>();
     }
 
-
-    public async Task<Tenant> SeedTenantAsync(string name = "Default Tenant", string email = "tenant@test.com")
-    {
-        var tenant = new Tenant(name, email);
-
-        await _dbContext.Tenants.AddAsync(tenant);
-        await _dbContext.SaveChangesAsync();
-
-        return tenant;
-    }
-
-
     [Fact]
     public async Task Success()
     {
-        var tenant = await SeedTenantAsync();
-
         var request = RequestCreateUserJsonBuilder.Build();
 
-        request.TenantId = tenant.Id;
+        request.TenantId = _firstTenant.GetId();
         var response = await _httpClient.PostAsJsonAsync(REQUEST_URI, request);
 
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
@@ -52,7 +44,6 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
         await using var responseBody = await response.Content.ReadAsStreamAsync();
 
         var responseData = await JsonDocument.ParseAsync(responseBody);
-
 
         responseData.RootElement.GetProperty("name").GetString().ShouldBe(request.Name);
         responseData.RootElement.GetProperty("email").GetString().ShouldBe(request.Email);
@@ -65,16 +56,14 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
     }
 
     [Theory]
-    [InlineData("en")]
-    [InlineData("pt-BR")]
+    [ClassData(typeof(CultureInlineData))]
     public async Task Validate_ShouldBeAnErrorResponse_WhenNameIsEmpty(string culture)
     {
-        var tenant = await SeedTenantAsync();
-
         var request = RequestCreateUserJsonBuilder.Build();
 
+
         request.Name = string.Empty;
-        request.TenantId = tenant.Id;
+        request.TenantId = _firstTenant.GetId();
 
         _httpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
         _httpClient.DefaultRequestHeaders.AcceptLanguage.ParseAdd(culture);
@@ -89,11 +78,16 @@ public class CreateUserTests : IClassFixture<WorkTreeApplicationFactory>
 
         var errors = responseData.RootElement.GetProperty("errors").EnumerateArray();
 
+        var expectedErrorMessage =
+            ResourceMessagesException.ResourceManager.GetString("VALIDATION_NAME_REQUIRED", new CultureInfo(culture));
+
         errors.ShouldSatisfyAllConditions(errorsList =>
         {
             errorsList.Count().ShouldBe(1);
-            errorsList.ShouldContain(error => error.GetString()!.Equals("Name could not be empty."));
+            errorsList.ShouldContain(error =>
+                error.GetString()!.Equals(expectedErrorMessage));
         });
+
 
         var userExists =
             await _dbContext.Users.AnyAsync(user => user.Name.Equals(request.Name) && user.Email.Equals(request.Email));

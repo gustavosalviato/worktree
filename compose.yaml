@@ -1,7 +1,0 @@
-﻿services:
-  auctify.api:
-    image: auctify.api
-    build:
-      context: .
-      dockerfile: Auctify.API/Dockerfile
-

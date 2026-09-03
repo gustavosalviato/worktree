@@ -1,6 +1,7 @@
 using WorkTree.Communication.Requests.Users;
 using WorkTree.Domain.Repositories;
 using WorkTree.Domain.Repositories.User;
+using WorkTree.Exceptions;
 using WorkTree.Exceptions.ExceptionsBase;
 
 namespace WorkTree.Application.UseCases.User.Update;
@@ -21,12 +22,12 @@ public class UpdateUserUseCase : IUpdateUserUseCase
 
     public async Task Execute(Guid userId, RequestUpdateUserJson request)
     {
-        ValidateAndThrowOnFailure(request);
+        ValidateAndThrowOnFailures(request);
 
         var user = await _userReadOnlyRepository.FindByIdAsync(userId);
 
         if (user is null)
-            throw new NotFoundErrorException("User not found.");
+            throw new NotFoundErrorException(ResourceMessagesException.USER_NOT_FOUND);
 
         user.Update(request.Name);
 
@@ -35,7 +36,7 @@ public class UpdateUserUseCase : IUpdateUserUseCase
         await _unitOfWork.CommitAsync();
     }
 
-    private void ValidateAndThrowOnFailure(RequestUpdateUserJson request)
+    private void ValidateAndThrowOnFailures(RequestUpdateUserJson request)
     {
         var validator = new RequestUpdateUserValidator();
 

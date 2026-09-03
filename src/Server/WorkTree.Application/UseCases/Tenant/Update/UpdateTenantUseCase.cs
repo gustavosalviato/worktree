@@ -1,6 +1,7 @@
 using WorkTree.Communication.Requests;
 using WorkTree.Domain.Repositories;
 using WorkTree.Domain.Repositories.Tenant;
+using WorkTree.Exceptions;
 using WorkTree.Exceptions.ExceptionsBase;
 
 namespace WorkTree.Application.UseCases.Tenant.Update;
@@ -26,7 +27,7 @@ public class UpdateTenantUseCase : IUpdateTenantUseCase
         var tenant = await _tenantReadOnlyRepository.FindByIdAsync(tenantId);
 
         if (tenant is null)
-            throw new NotFoundErrorException("Tenant not found.");
+            throw new NotFoundErrorException(ResourceMessagesException.ORGANIZATION_NOT_FOUND);
 
         tenant.Update(request.Name);
 

@@ -1,5 +1,6 @@
 using WorkTree.Domain.Repositories;
 using WorkTree.Domain.Repositories.User;
+using WorkTree.Exceptions;
 using WorkTree.Exceptions.ExceptionsBase;
 
 namespace WorkTree.Application.UseCases.User.Delete;
@@ -23,7 +24,7 @@ public class DeleteUserUseCase : IDeleteUserUseCase
         var user = await _userReadOnlyRepository.FindByIdAsync(userId);
 
         if (user is null)
-            throw new NotFoundErrorException("User does not exist");
+            throw new NotFoundErrorException(ResourceMessagesException.USER_NOT_FOUND);
 
         _userWriteOnlyRepository.Delete(user);
 
