@@ -30,6 +30,12 @@ public class User : EntityBase
         Touch();
     }
 
+    public void ChangeTenantId(Guid tenantId)
+    {
+        TenantId = tenantId;
+        Touch();
+    }
+
     private void Touch()
     {
         UpdatedAt = DateTime.UtcNow;

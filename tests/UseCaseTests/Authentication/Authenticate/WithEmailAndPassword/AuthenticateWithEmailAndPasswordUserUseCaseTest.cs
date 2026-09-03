@@ -1,4 +1,3 @@
-using System.Security.Authentication;
 using CommonTestUtilities.Entities;
 using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Requests;
@@ -15,7 +14,7 @@ public class AuthenticateWithEmailAndPasswordUserUseCaseTest
     [Fact]
     public async Task Success()
     {
-        var user = UserBuilder.Build();
+        var (user, _) = UserBuilder.Build();
         var request = RequestAuthenticateJsonBuilder.Build();
 
         request.Email = user.Email;
@@ -50,7 +49,7 @@ public class AuthenticateWithEmailAndPasswordUserUseCaseTest
     [Fact]
     public async Task ShouldThrowException_WhenPasswordDoesNotMatch()
     {
-        var user = UserBuilder.Build();
+        var (user, password) = UserBuilder.Build();
         var request = RequestAuthenticateJsonBuilder.Build();
 
         request.Email = user.Email;
@@ -58,7 +57,7 @@ public class AuthenticateWithEmailAndPasswordUserUseCaseTest
         var useCase = CreateUseCase(user: user);
 
         var exception = await useCase.Execute(request).ShouldThrowAsync<InvalidCredentialsException>();
-        
+
         exception.GetErrors().ShouldSatisfy([
             e => e.Count.ShouldBe(1),
             e => e.ShouldContain(ResourceMessagesException.INVALID_CREDENTIALS)
