@@ -43,7 +43,8 @@ public class AuthenticateWithEmailAndPasswordUserUseCase : IAuthenticateWithEmai
 
         var response = new ResponseAuthenticateUserJson
         {
-            AccessToken = _accessTokenGenerator.Generate(user)
+            AccessToken = _accessTokenGenerator.Generate(user),
+            RefreshToken = string.Empty
         };
 
         return response;
