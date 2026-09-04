@@ -24,7 +24,6 @@ internal sealed class JwtTokenHandler : IAccessTokenGenerator
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Name, user.Name),
-            new Claim("tenantId", user.TenantId.ToString()),
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor
