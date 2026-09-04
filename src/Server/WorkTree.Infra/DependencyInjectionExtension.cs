@@ -20,8 +20,19 @@ public static class DependencyInjectionExtension
     {
         public void AddInfrastructure(IConfiguration configuration)
         {
+            services.AddRepositories();
+            services.AddTokensHandlers(configuration);
+
             services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
 
+            services.AddDbContext<WorkTreeDbContext>(option =>
+            {
+                option.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            });
+        }
+
+        private void AddRepositories()
+        {
             services.AddScoped<IUserWriteOnlyRepository, UserRepository>();
             services.AddScoped<IUserReadOnlyRepository, UserRepository>();
 
@@ -29,13 +40,12 @@ public static class DependencyInjectionExtension
             services.AddScoped<ITenantReadOnlyRepository, TenantRepository>();
 
             services.AddScoped<IRefreshTokenWriteOnlyRepository, RefreshTokenRepository>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+        }
 
-            services.AddDbContext<WorkTreeDbContext>(option =>
-            {
-                option.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
-            });
-
+        private void AddTokensHandlers(IConfiguration configuration)
+        {
             services.AddScoped<IAccessTokenGenerator>(provider =>
             {
                 var signinKey = configuration.GetValue<string>("Jwt:SecretKey")!;

@@ -18,6 +18,12 @@ public static class DependencyInjectionExtension
     {
         public void AddApplication()
         {
+            services.AddUseCases();
+        }
+
+
+        private void AddUseCases()
+        {
             services.AddScoped<ICreateUserUseCase, CreateUserUseCase>();
             services.AddScoped<IDeleteUserUseCase, DeleteUserUseCase>();
             services.AddScoped<IGetAllUsersUseCase, GetAllUsersUseCase>();
