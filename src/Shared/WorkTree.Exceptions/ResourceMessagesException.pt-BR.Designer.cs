@@ -110,5 +110,17 @@ namespace WorkTree.Exceptions {
                 return ResourceManager.GetString("INVALID_CREDENTIALS", resourceCulture);
             }
         }
+        
+        internal static string VALIDATION_ACCESS_TOKEN_REQUIRED {
+            get {
+                return ResourceManager.GetString("VALIDATION_ACCESS_TOKEN_REQUIRED", resourceCulture);
+            }
+        }
+        
+        internal static string VALIDATION_RESOURCE_ACCESS_DENIED {
+            get {
+                return ResourceManager.GetString("VALIDATION_RESOURCE_ACCESS_DENIED", resourceCulture);
+            }
+        }
     }
 }

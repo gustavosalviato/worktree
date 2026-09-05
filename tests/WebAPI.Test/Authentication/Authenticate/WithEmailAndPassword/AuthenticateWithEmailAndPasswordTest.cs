@@ -37,7 +37,7 @@ public class AuthenticateWithEmailAndPasswordTest : BaseIntegrationTest
         await using var responseBody = await response.Content.ReadAsStreamAsync();
         var responseData = await JsonDocument.ParseAsync(responseBody);
 
-        responseData.RootElement.GetProperty("accessToken").GetString().ShouldBeEmpty();
+        responseData.RootElement.GetProperty("accessToken").GetString().ShouldNotBeNullOrEmpty();
         responseData.RootElement.GetProperty("refreshToken").GetString().ShouldBeEmpty();
     }
 

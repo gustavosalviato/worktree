@@ -1,9 +1,18 @@
 using System.Globalization;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using WorkTree.API.Filters;
 using WorkTree.API.Converters;
 using WorkTree.Application;
+using WorkTree.Communication.Responses;
+using WorkTree.Domain.Repositories.User;
+using WorkTree.Exceptions;
 using WorkTree.Infra;
 using WorkTree.Infra.Migrations;
 
@@ -12,7 +21,29 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new StringConverter()));
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen((options) =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter only you access token, Swagger will add 'Bearer' automatically",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+    });
+
+    options.AddSecurityRequirement(openApiDocument =>
+    {
+        return new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecuritySchemeReference("Bearer", openApiDocument),
+                []
+            }
+        };
+    });
+});
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -39,6 +70,64 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.RequestCultureProviders = new List<IRequestCultureProvider>
     {
         new AcceptLanguageHeaderRequestCultureProvider(),
+    };
+});
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    var signinKey = builder.Configuration.GetValue<string>("Jwt:SecretKey")!;
+
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signinKey)),
+        ClockSkew = TimeSpan.Zero,
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var subject = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub) ??
+                          context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+            if (!Guid.TryParse(subject, out var userId))
+            {
+                context.Fail("Invalid token subject.");
+
+                return;
+            }
+
+            var userRepository = context.HttpContext.RequestServices.GetRequiredService<IUserReadOnlyRepository>();
+
+            var userExists = await userRepository.FindAnyByIdAsync(userId);
+
+            if (!userExists)
+                context.Fail("User not found.");
+        },
+
+        OnChallenge = async context =>
+        {
+            context.HandleResponse();
+
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+            context.Response.ContentType = "application/json";
+
+            var response = context.AuthenticateFailure switch
+            {
+                null => new ResponseErrorMessagesJson(ResourceMessagesException.VALIDATION_ACCESS_TOKEN_REQUIRED),
+                SecurityTokenExpiredException => new ResponseErrorMessagesJson(message: "Token expired",
+                    accessTokenExpired: true),
+                _ => new ResponseErrorMessagesJson(ResourceMessagesException.VALIDATION_RESOURCE_ACCESS_DENIED),
+            };
+
+            await context.Response.WriteAsJsonAsync(response);
+        },
     };
 });
 

@@ -14,7 +14,7 @@ namespace WebAPI.Test;
 public class WorkTreeApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     public UserIdentityManager FirstUser { get; private set; }
-    public TenantIdentityManager FirstTenant { get; private set; }
+    public TenantIdentityManager FirstTenant { get; private set; }  
 
     private readonly PostgreSqlContainer _postgreSqlContainer;
 

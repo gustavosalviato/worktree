@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using WorkTree.Communication.Responses;
 using Microsoft.AspNetCore.Mvc;
 using WorkTree.Application.UseCases.User.Create;
@@ -53,6 +54,7 @@ public class UsersController : Controller
     }
 
     [HttpGet]
+    [Authorize]
     [Route("{userId}")]
     [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
