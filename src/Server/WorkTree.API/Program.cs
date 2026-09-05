@@ -1,12 +1,15 @@
 using System.Globalization;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using WorkTree.API.Filters;
 using WorkTree.API.Converters;
 using WorkTree.Application;
+using WorkTree.Domain.Repositories.User;
 using WorkTree.Infra;
 using WorkTree.Infra.Migrations;
 
@@ -57,6 +60,29 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateLifetime = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signinKey)),
         ClockSkew = TimeSpan.Zero,
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var userId = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub) ??
+                         context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId is null)
+            {
+                context.Fail("Invalid subject.");
+
+                return;
+            }
+
+            var userRepository = context.HttpContext.RequestServices.GetRequiredService<IUserReadOnlyRepository>();
+
+            var userExists = await userRepository.FindByIdAsync(Guid.Parse(userId));
+
+            if (userExists is null)
+                context.Fail("User not found.");
+        }
     };
 });
 
