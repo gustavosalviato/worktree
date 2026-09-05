@@ -9,7 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 using WorkTree.API.Filters;
 using WorkTree.API.Converters;
 using WorkTree.Application;
+using WorkTree.Communication.Responses;
 using WorkTree.Domain.Repositories.User;
+using WorkTree.Exceptions;
 using WorkTree.Infra;
 using WorkTree.Infra.Migrations;
 
@@ -66,23 +68,43 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     {
         OnTokenValidated = async context =>
         {
-            var userId = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub) ??
-                         context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+            var subject = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub) ??
+                          context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (userId is null)
+
+            if (!Guid.TryParse(subject, out var userId))
             {
-                context.Fail("Invalid subject.");
+                context.Fail("Invalid token subject.");
 
                 return;
             }
 
             var userRepository = context.HttpContext.RequestServices.GetRequiredService<IUserReadOnlyRepository>();
 
-            var userExists = await userRepository.FindByIdAsync(Guid.Parse(userId));
+            var userExists = await userRepository.FindAnyByIdAsync(userId);
 
-            if (userExists is null)
+            if (!userExists)
                 context.Fail("User not found.");
-        }
+        },
+
+        OnChallenge = async context =>
+        {
+            context.HandleResponse();
+
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+            context.Response.ContentType = "application/json";
+
+            var response = context.AuthenticateFailure switch
+            {
+                null => new ResponseErrorMessagesJson(ResourceMessagesException.VALIDATION_ACCESS_TOKEN_REQUIRED),
+                SecurityTokenExpiredException => new ResponseErrorMessagesJson(message: "Token expired",
+                    accessTokenExpired: true),
+                _ => new ResponseErrorMessagesJson(ResourceMessagesException.VALIDATION_RESOURCE_ACCESS_DENIED),
+            };
+
+            await context.Response.WriteAsJsonAsync(response);
+        },
     };
 });
 
