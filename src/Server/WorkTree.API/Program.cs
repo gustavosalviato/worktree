@@ -1,6 +1,9 @@
 using System.Globalization;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using WorkTree.API.Filters;
 using WorkTree.API.Converters;
 using WorkTree.Application;
@@ -39,6 +42,21 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.RequestCultureProviders = new List<IRequestCultureProvider>
     {
         new AcceptLanguageHeaderRequestCultureProvider(),
+    };
+});
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    var signinKey = builder.Configuration.GetValue<string>("Jwt:SecretKey")!;
+
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signinKey)),
+        ClockSkew = TimeSpan.Zero,
     };
 });
 
