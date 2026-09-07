@@ -55,12 +55,12 @@ public class UsersController : Controller
 
     [HttpGet]
     [Authorize]
-    [Route("{userId}")]
+    [Route("profile")]
     [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById([FromRoute] Guid userId, [FromServices] IGetUserByIdUseCase useCase)
     {
-        var response = await useCase.Execute(userId);
+        var response = await useCase.Execute();
 
         return Ok(response);
     }

@@ -4,5 +4,5 @@ namespace WorkTree.Application.UseCases.User.GetById;
 
 public interface IGetUserByIdUseCase
 {
-    Task<ResponseUserJson> Execute(Guid userId);
+    Task<ResponseUserJson> Execute();
 }

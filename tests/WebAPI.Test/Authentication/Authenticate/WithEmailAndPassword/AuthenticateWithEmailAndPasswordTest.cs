@@ -47,7 +47,7 @@ public class AuthenticateWithEmailAndPasswordTest : BaseIntegrationTest
     {
         var request = RequestAuthenticateJsonBuilder.Build();
 
-        var response = await Post(RequestUri, request, culture);
+        var response = await Post(RequestUri, request, culture: culture);
 
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 

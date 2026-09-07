@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using WebAPI.Test.Resources;
@@ -21,17 +22,32 @@ public abstract class BaseIntegrationTest : IClassFixture<WorkTreeApplicationFac
     }
 
 
-    protected async Task<HttpResponseMessage> Post(string uri, object request, string culture = "en")
+    protected async Task<HttpResponseMessage> Post(string uri, object request, string accessToken = "", string culture = "en")
     {
         AssignRequestCulture(culture);
+        AuthorizeRequest(accessToken);
 
         return await _httpClient.PostAsJsonAsync(uri, request);
+    }
+
+    protected async Task<HttpResponseMessage> Get(string uri, string accessToken, string culture = "en")
+    {
+        AssignRequestCulture(culture);
+        AuthorizeRequest(accessToken);
+
+        return await _httpClient.GetAsync(uri);
     }
 
     private void AssignRequestCulture(string culture)
     {
         _httpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
         _httpClient.DefaultRequestHeaders.AcceptLanguage.ParseAdd(culture);
+    }
+
+    private void AuthorizeRequest(string accessToken)
+    {
+        if (!string.IsNullOrEmpty(accessToken))
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
     }
 
 

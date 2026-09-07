@@ -7,6 +7,7 @@ using Testcontainers.PostgreSql;
 using WebAPI.Test.Resources;
 using WorkTree.Domain.Entities;
 using WorkTree.Domain.Security.PasswordHashing;
+using WorkTree.Domain.Security.Tokens;
 using WorkTree.Infra.DataAccess;
 
 namespace WebAPI.Test;
@@ -14,7 +15,7 @@ namespace WebAPI.Test;
 public class WorkTreeApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     public UserIdentityManager FirstUser { get; private set; }
-    public TenantIdentityManager FirstTenant { get; private set; }  
+    public TenantIdentityManager FirstTenant { get; private set; }
 
     private readonly PostgreSqlContainer _postgreSqlContainer;
 
@@ -41,22 +42,26 @@ public class WorkTreeApplicationFactory : WebApplicationFactory<Program>, IAsync
         await _postgreSqlContainer.StartAsync();
 
         var tenant = await SeedTenant();
-        var (user, password) = await SeedUser(tenant.Id);
+        var (user, password, accessToken) = await SeedUser(tenant.Id);
 
-        FirstUser = new UserIdentityManager(user, password);
+        FirstUser = new UserIdentityManager(user, password, accessToken);
         FirstTenant = new TenantIdentityManager(tenant);
     }
 
-    private async Task<(WorkTree.Domain.Entities.User user, string password)> SeedUser(Guid tenantId)
+    private async Task<(WorkTree.Domain.Entities.User user, string password, string accessToken)> SeedUser(
+        Guid tenantId)
     {
         await using var scope = Services.CreateAsyncScope();
 
         var dbContext = scope.ServiceProvider.GetRequiredService<WorkTreeDbContext>();
         var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+        var accessTokenGenerator = scope.ServiceProvider.GetRequiredService<IAccessTokenGenerator>();
 
         var (user, password) = UserBuilder.Build();
 
         var passwordHash = passwordHasher.HashPassword(password);
+
+        var accessToken = accessTokenGenerator.Generate(user);
 
         user.ChangePassword(passwordHash);
         user.ChangeTenantId(tenantId);
@@ -64,7 +69,7 @@ public class WorkTreeApplicationFactory : WebApplicationFactory<Program>, IAsync
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
 
-        return (user, password);
+        return (user, password, accessToken);
     }
 
     private async Task<Tenant> SeedTenant()

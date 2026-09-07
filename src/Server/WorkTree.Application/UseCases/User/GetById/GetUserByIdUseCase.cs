@@ -13,7 +13,7 @@ public class GetUserByIdUseCase : IGetUserByIdUseCase
         _loggedUser = loggedUser;
     }
 
-    public async Task<ResponseUserJson> Execute(Guid userId)
+    public async Task<ResponseUserJson> Execute()
     {
         var loggedUser = await _loggedUser.Get();
 
