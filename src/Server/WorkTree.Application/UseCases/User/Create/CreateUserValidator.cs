@@ -1,4 +1,5 @@
 using FluentValidation;
+using WorkTree.Application.UseCases.Shared.Validators;
 using WorkTree.Communication.Requests.Users;
 using WorkTree.Exceptions;
 
@@ -10,8 +11,8 @@ public class CreateUserValidator : AbstractValidator<RequestCreateUserJson>
     {
         RuleFor(user => user.Name).NotEmpty().WithMessage(ResourceMessagesException.VALIDATION_NAME_REQUIRED);
         RuleFor(user => user.Email).NotEmpty().WithMessage(ResourceMessagesException.VALIDATION_EMAIL_REQUIRED);
-        RuleFor(user => user.Password).NotEmpty().WithMessage(ResourceMessagesException.VALIDATION_PASSWORD_REQUIRED);
-        
+        RuleFor(user => user.Password).Password();
+
         RuleFor(user => user.TenantId).NotEmpty().WithMessage(ResourceMessagesException.VALIDATION_TENANT_REQUIRED);
 
         When(user => !string.IsNullOrWhiteSpace(user.Email),
@@ -19,13 +20,6 @@ public class CreateUserValidator : AbstractValidator<RequestCreateUserJson>
             {
                 RuleFor(user => user.Email).EmailAddress()
                     .WithMessage(ResourceMessagesException.VALIDATION_EMAIL_INVALID);
-            });
-
-        When(user => !string.IsNullOrWhiteSpace(user.Password),
-            () =>
-            {
-                RuleFor(user => user.Password).MinimumLength(8)
-                    .WithMessage(ResourceMessagesException.VALIDATION_PASSWORD_MINIMUM_LENGTH);
             });
     }
 }

@@ -57,4 +57,7 @@
     <data name="VALIDATION_RESOURCE_ACCESS_DENIED" xml:space="preserve">
         <value>Você não tem acesso a esse recurso.</value>
     </data>
+    <data name="VALIDATION_CURRENT_PASSWORD" xml:space="preserve">
+        <value>Senha atual informada é incorreta.</value>
+    </data>
 </root>
