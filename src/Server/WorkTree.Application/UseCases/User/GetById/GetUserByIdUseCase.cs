@@ -1,32 +1,22 @@
+using Mapster;
 using WorkTree.Communication.Responses.Users;
-using WorkTree.Domain.Repositories.User;
-using WorkTree.Exceptions;
-using WorkTree.Exceptions.ExceptionsBase;
+using WorkTree.Domain.Identity;
 
 namespace WorkTree.Application.UseCases.User.GetById;
 
 public class GetUserByIdUseCase : IGetUserByIdUseCase
 {
-    private readonly IUserReadOnlyRepository _userReadOnlyRepository;
+    private readonly ILoggedUser _loggedUser;
 
-    public GetUserByIdUseCase(IUserReadOnlyRepository userReadOnlyRepository)
+    public GetUserByIdUseCase(ILoggedUser loggedUser)
     {
-        _userReadOnlyRepository = userReadOnlyRepository;
+        _loggedUser = loggedUser;
     }
 
-    public async Task<ResponseUserJson> Execute(Guid userId)
+    public async Task<ResponseUserJson> Execute()
     {
-        var user = await _userReadOnlyRepository.FindByIdAsync(userId);
+        var loggedUser = await _loggedUser.Get();
 
-        if (user is null)
-            throw new NotFoundErrorException(ResourceMessagesException.USER_NOT_FOUND);
-
-        return new ResponseUserJson
-        {
-            Id = user.Id,
-            Name = user.Name,
-            Email = user.Email,
-            TenantId = user.TenantId
-        };
+        return loggedUser.Adapt<ResponseUserJson>();
     }
 }

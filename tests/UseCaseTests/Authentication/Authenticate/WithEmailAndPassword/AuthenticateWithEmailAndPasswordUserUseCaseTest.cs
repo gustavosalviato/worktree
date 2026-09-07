@@ -69,6 +69,7 @@ public class AuthenticateWithEmailAndPasswordUserUseCaseTest
     {
         var passwordHasherBuilder = new PasswordHasherBuilder();
         var userReadOnlyRepositoryBuilder = new UserReadOnlyRepositoryBuilder();
+        var accessTokenGeneratorBuilder = AccessTokenGeneratorBuilder.Build();
 
         if (user is not null)
             userReadOnlyRepositoryBuilder.FindByEmailAsync(user);
@@ -78,7 +79,11 @@ public class AuthenticateWithEmailAndPasswordUserUseCaseTest
             passwordHasherBuilder.VerifyPassword(password);
 
 
-        return new AuthenticateWithEmailAndPasswordUserUseCase(userReadOnlyRepositoryBuilder.Build(),
-            passwordHasherBuilder.Build());
+        return new AuthenticateWithEmailAndPasswordUserUseCase
+        (
+            userReadOnlyRepositoryBuilder.Build(),
+            passwordHasherBuilder.Build(),
+            accessTokenGeneratorBuilder
+        );
     }
 }
