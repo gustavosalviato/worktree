@@ -9,9 +9,11 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using WorkTree.API.Filters;
 using WorkTree.API.Converters;
+using WorkTree.API.Token;
 using WorkTree.Application;
 using WorkTree.Communication.Responses;
 using WorkTree.Domain.Repositories.User;
+using WorkTree.Domain.Security.Tokens;
 using WorkTree.Exceptions;
 using WorkTree.Infra;
 using WorkTree.Infra.Migrations;
@@ -47,6 +49,9 @@ builder.Services.AddSwaggerGen((options) =>
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddScoped<IAccessTokenProvider, HttpContextTokenProvider>();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthorization();
 

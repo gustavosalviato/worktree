@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WorkTree.Domain.Identity;
 using WorkTree.Domain.Repositories;
 using WorkTree.Domain.Repositories.RefreshToken;
 using WorkTree.Domain.Repositories.Tenant;
@@ -9,6 +10,7 @@ using WorkTree.Domain.Security.PasswordHashing;
 using WorkTree.Domain.Security.Tokens;
 using WorkTree.Infra.DataAccess;
 using WorkTree.Infra.DataAccess.Repositories;
+using WorkTree.Infra.Identity;
 using WorkTree.Infra.Security.PasswordHashing;
 using WorkTree.Infra.Security.Tokens.Access;
 
@@ -24,6 +26,7 @@ public static class DependencyInjectionExtension
             services.AddTokensHandlers(configuration);
 
             services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
+            services.AddScoped<ILoggedUser, LoggedUser>();
 
             services.AddDbContext<WorkTreeDbContext>(option =>
             {
@@ -48,7 +51,7 @@ public static class DependencyInjectionExtension
         {
             services.AddScoped<IAccessTokenGenerator>(provider =>
             {
-                var signinKey = configuration.GetValue<string>("Jwt:SecretKey")!;
+                    var signinKey = configuration.GetValue<string>("Jwt:SecretKey")!;
                 var accessTokenExpirationInMinutes = configuration.GetValue<uint>("Jwt:AccessTokenExpirationMinutes");
 
                 return new JwtTokenHandler(accessTokenExpirationInMinutes, signinKey);
