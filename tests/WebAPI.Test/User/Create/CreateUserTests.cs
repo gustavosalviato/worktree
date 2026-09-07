@@ -55,7 +55,7 @@ public class CreateUserTests : BaseIntegrationTest
         request.Name = string.Empty;
         request.TenantId = _firstTenant.GetId();
 
-        var response = await Post(RequestUri, request, culture);
+        var response = await Post(RequestUri, request, culture: culture);
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 

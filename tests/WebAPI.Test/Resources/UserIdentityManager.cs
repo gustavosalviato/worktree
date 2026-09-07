@@ -4,12 +4,14 @@ public class UserIdentityManager
 {
     private readonly WorkTree.Domain.Entities.User _user;
     private readonly string _password;
+    private readonly string _accessToken;
 
 
-    public UserIdentityManager(WorkTree.Domain.Entities.User user, string password)
+    public UserIdentityManager(WorkTree.Domain.Entities.User user, string password, string accessToken)
     {
         _user = user;
         _password = password;
+        _accessToken = accessToken;
     }
 
 
@@ -19,4 +21,5 @@ public class UserIdentityManager
     public string GetPasswordHash() => _user.PasswordHash;
     public string GetPassword() => _password;
     public Guid GetTenantId() => _user.TenantId;
+    public string GetAccessToken() => _accessToken;
 }

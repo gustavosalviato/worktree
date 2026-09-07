@@ -51,4 +51,10 @@
     <data name="INVALID_CREDENTIALS" xml:space="preserve">
         <value>Credenciais inválidas.</value>
     </data>
+    <data name="VALIDATION_ACCESS_TOKEN_REQUIRED" xml:space="preserve">
+        <value>Essa requisição precisa de um access token.</value>
+    </data>
+    <data name="VALIDATION_RESOURCE_ACCESS_DENIED" xml:space="preserve">
+        <value>Você não tem acesso a esse recurso.</value>
+    </data>
 </root>

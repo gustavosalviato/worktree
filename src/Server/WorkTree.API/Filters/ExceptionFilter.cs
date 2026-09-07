@@ -23,6 +23,7 @@ public class ExceptionFilter : IExceptionFilter
 
     private void ThrowUnknownError(ExceptionContext context)
     {
+        Console.WriteLine(context.Exception.Message);
         context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         context.Result = new ObjectResult(new ResponseErrorMessagesJson("Unknown error."));
     }
