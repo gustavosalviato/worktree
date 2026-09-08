@@ -4,7 +4,7 @@ using WorkTree.Domain.Repositories.User;
 
 namespace WorkTree.Infra.DataAccess.Repositories;
 
-internal sealed class UserRepository : IUserWriteOnlyRepository, IUserReadOnlyRepository
+internal sealed class UserRepository : IUserWriteOnlyRepository, IUserReadOnlyRepository, IUserUpdateOnlyRepository
 {
     private readonly WorkTreeDbContext _context;
 
@@ -15,11 +15,6 @@ internal sealed class UserRepository : IUserWriteOnlyRepository, IUserReadOnlyRe
         await _context.Users.AddAsync(user);
     }
 
-
-    public void Update(User user)
-    {
-        _context.Users.Update(user);
-    }
 
     public void Delete(User user)
     {
@@ -50,5 +45,19 @@ internal sealed class UserRepository : IUserWriteOnlyRepository, IUserReadOnlyRe
         var users = await _context.Users.ToListAsync();
 
         return users;
+    }
+
+    public async Task UpdatePassword(Guid userId, string password)
+    {
+        await _context.Users
+            .Where(user => user.Id == userId)
+            .ExecuteUpdateAsync(setter => setter.SetProperty(user => user.PasswordHash, password));
+    }
+
+    public void UpdateProfile(User user)
+    {
+        _context.Users.Attach(user);
+
+        _context.Entry(user).Property(u => u.Name).IsModified = true;
     }
 }
