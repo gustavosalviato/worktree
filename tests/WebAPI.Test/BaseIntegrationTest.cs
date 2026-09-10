@@ -29,6 +29,14 @@ public abstract class BaseIntegrationTest : IClassFixture<WorkTreeApplicationFac
 
         return await _httpClient.PostAsJsonAsync(uri, request);
     }
+    
+    protected async Task<HttpResponseMessage> Put(string uri, object request, string accessToken = "", string culture = "en")
+    {
+        AssignRequestCulture(culture);
+        AuthorizeRequest(accessToken);
+
+        return await _httpClient.PutAsJsonAsync(uri, request);
+    }
 
     protected async Task<HttpResponseMessage> Get(string uri, string accessToken, string culture = "en")
     {
