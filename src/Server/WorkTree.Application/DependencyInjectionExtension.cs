@@ -4,6 +4,7 @@ using WorkTree.Application.UseCases.Tenant.Create;
 using WorkTree.Application.UseCases.Tenant.Delete;
 using WorkTree.Application.UseCases.Tenant.GetById;
 using WorkTree.Application.UseCases.Tenant.Update;
+using WorkTree.Application.UseCases.User.ChangePassword;
 using WorkTree.Application.UseCases.User.Create;
 using WorkTree.Application.UseCases.User.Delete;
 using WorkTree.Application.UseCases.User.GetAll;
@@ -34,6 +35,8 @@ public static class DependencyInjectionExtension
             services.AddScoped<IUpdateTenantUseCase, UpdateTenantUseCase>();
             services.AddScoped<IDeleteTenantUseCase, DeleteTenantUseCase>();
             services.AddScoped<IGetTenantByIdUseCase, GetTenantByIdUseCase>();
+            
+            services.AddScoped<IChangePasswordUseCase, ChangePasswordUseCase>();
 
             services
                 .AddScoped<IAuthenticateWithEmailAndPasswordUserUseCase, AuthenticateWithEmailAndPasswordUserUseCase>();

@@ -4,5 +4,5 @@ namespace WorkTree.Application.UseCases.User.Update;
 
 public interface IUpdateUserUseCase
 {
-    Task Execute(Guid userId, RequestUpdateUserJson request);
+    Task Execute(RequestUpdateUserJson request);
 }

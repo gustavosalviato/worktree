@@ -49,7 +49,7 @@ public class AuthenticateWithEmailAndPasswordUserUseCaseTest
     [Fact]
     public async Task ShouldThrowException_WhenPasswordDoesNotMatch()
     {
-        var (user, password) = UserBuilder.Build();
+        var (user, _) = UserBuilder.Build();
         var request = RequestAuthenticateJsonBuilder.Build();
 
         request.Email = user.Email;
