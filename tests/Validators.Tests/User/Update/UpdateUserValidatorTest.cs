@@ -3,9 +3,9 @@ using Shouldly;
 using WorkTree.Application.UseCases.User.Update;
 using WorkTree.Exceptions;
 
-namespace Validators.Tests.User.Create;
+namespace Validators.Tests.User.Update;
 
-public class UpdateUserUseCaseTest
+public class UpdateUserValidatorTest
 {
     [Fact]
     public void Success()

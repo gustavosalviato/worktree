@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using WorkTree.Communication.Responses;
 using Microsoft.AspNetCore.Mvc;
+using WorkTree.Application.UseCases.User.ChangePassword;
 using WorkTree.Application.UseCases.User.Create;
 using WorkTree.Application.UseCases.User.Delete;
 using WorkTree.Application.UseCases.User.GetAll;
@@ -28,15 +29,14 @@ public class UsersController : Controller
         return Created(string.Empty, response);
     }
 
-    [HttpPut]
-    [Route("{userId}")]
+    [HttpPut("profile")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Update([FromRoute] Guid userId, [FromBody] RequestUpdateUserJson request,
+    public async Task<IActionResult> Update([FromBody] RequestUpdateUserJson request,
         [FromServices] IUpdateUserUseCase useCase)
     {
-        await useCase.Execute(userId, request);
+        await useCase.Execute(request);
 
         return NoContent();
     }
@@ -53,11 +53,9 @@ public class UsersController : Controller
         return Ok();
     }
 
-    [HttpGet]
+    [HttpGet("profile")]
     [Authorize]
-    [Route("profile")]
     [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById([FromRoute] Guid userId, [FromServices] IGetUserByIdUseCase useCase)
     {
         var response = await useCase.Execute();
@@ -76,5 +74,17 @@ public class UsersController : Controller
             return NoContent();
 
         return Ok(users);
+    }
+
+    [HttpPut("password")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Update([FromBody] RequestChangePasswordJson request,
+        [FromServices] IChangePasswordUseCase useCase)
+    {
+        await useCase.Execute(request);
+
+        return NoContent();
     }
 }
