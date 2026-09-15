@@ -14,8 +14,10 @@ namespace WebAPI.Test;
 
 public class WorkTreeApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    public UserIdentityManager FirstUser { get; private set; }
-    public TenantIdentityManager FirstTenant { get; private set; }
+    public UserIdentityManager FirstUser { get; private set; } = default!;
+    public TenantIdentityManager FirstTenant { get; private set; } = default!;
+
+    public string TokenUserNotFound { get; private set; } = string.Empty;
 
     private readonly PostgreSqlContainer _postgreSqlContainer;
 
@@ -42,13 +44,14 @@ public class WorkTreeApplicationFactory : WebApplicationFactory<Program>, IAsync
         await _postgreSqlContainer.StartAsync();
 
         var tenant = await SeedTenant();
-        var (user, password, accessToken) = await SeedUser(tenant.Id);
+        var (user, password, accessToken, invalidToken) = await SeedUser(tenant.Id);
 
         FirstUser = new UserIdentityManager(user, password, accessToken);
         FirstTenant = new TenantIdentityManager(tenant);
+        TokenUserNotFound = invalidToken;
     }
 
-    private async Task<(WorkTree.Domain.Entities.User user, string password, string accessToken)> SeedUser(
+    private async Task<(WorkTree.Domain.Entities.User user, string password, string accessToken, string invalidToken)> SeedUser(
         Guid tenantId)
     {
         await using var scope = Services.CreateAsyncScope();
@@ -63,13 +66,15 @@ public class WorkTreeApplicationFactory : WebApplicationFactory<Program>, IAsync
 
         var accessToken = accessTokenGenerator.Generate(user);
 
+        var invalidToken = accessTokenGenerator.Generate(new WorkTree.Domain.Entities.User());
+
         user.ChangePassword(passwordHash);
         user.ChangeTenantId(tenantId);
 
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
 
-        return (user, password, accessToken);
+        return (user, password, accessToken, invalidToken);
     }
 
     private async Task<Tenant> SeedTenant()
