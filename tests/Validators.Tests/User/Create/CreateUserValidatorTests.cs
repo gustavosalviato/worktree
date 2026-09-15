@@ -35,7 +35,8 @@ public class CreateUserValidatorTests
 
         result.Errors.ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain(error => error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_NAME_REQUIRED)),
+            e => e.ShouldContain(error =>
+                error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_NAME_REQUIRED)),
         ]);
     }
 
@@ -54,7 +55,8 @@ public class CreateUserValidatorTests
 
         result.Errors.ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain(error => error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_EMAIL_REQUIRED))
+            e => e.ShouldContain(error =>
+                error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_EMAIL_REQUIRED))
         ]);
     }
 
@@ -71,16 +73,22 @@ public class CreateUserValidatorTests
         result.IsValid.ShouldBeFalse();
         result.Errors.ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain(error => error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_PASSWORD_REQUIRED)),
+            e => e.ShouldContain(error =>
+                error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_PASSWORD_REQUIRED)),
         ]);
     }
-    
+
     [Theory]
-    [InlineData("1234565")]
-    public void Validation_ShouldHaveError_WhenPasswordDoesNotHaveMinimumLength(string password)
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
+    public void Validation_ShouldHaveError_WhenPasswordDoesNotHaveMinimumLength(int passwordLength)
     {
-        var request = RequestCreateUserJsonBuilder.Build();
-        request.Password = password;
+        var request = RequestCreateUserJsonBuilder.Build(passwordLength);
 
         var validator = new CreateUserValidator();
 
@@ -89,7 +97,8 @@ public class CreateUserValidatorTests
         result.IsValid.ShouldBeFalse();
         result.Errors.ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain(error => error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_PASSWORD_MINIMUM_LENGTH)),
+            e => e.ShouldContain(error =>
+                error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_PASSWORD_MINIMUM_LENGTH)),
         ]);
     }
 
@@ -106,7 +115,8 @@ public class CreateUserValidatorTests
         result.IsValid.ShouldBeFalse();
         result.Errors.ShouldSatisfy([
             e => e.Count.ShouldBe(1),
-            e => e.ShouldContain(error => error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_TENANT_REQUIRED)),
+            e => e.ShouldContain(error =>
+                error.ErrorMessage.Equals(ResourceMessagesException.VALIDATION_TENANT_REQUIRED)),
         ]);
     }
 }

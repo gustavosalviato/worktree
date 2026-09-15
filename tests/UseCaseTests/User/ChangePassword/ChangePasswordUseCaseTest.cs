@@ -15,15 +15,35 @@ public class ChangePasswordUseCaseTest
     [Fact]
     public async Task Success()
     {
-        var (user, _) = UserBuilder.Build();
+        var (user, password) = UserBuilder.Build();
 
         var request = RequestChangePasswordJsonBuilder.Build();
 
-        request.CurrentPassword = user.PasswordHash;
+        request.CurrentPassword = password;
 
-        var useCase = CreateUseCase(user, request.CurrentPassword);
+        var useCase = CreateUseCase(user, password);
 
         await useCase.Execute(request);
+    }
+
+    [Fact]
+    public async Task ShouldThrowException_WhenNewPasswordIsEmpty()
+    {
+        var (user, password) = UserBuilder.Build();
+        
+        var request = RequestChangePasswordJsonBuilder.Build();
+        
+        request.NewPassword = string.Empty;
+        request.CurrentPassword = password;
+        
+        var useCase = CreateUseCase(user, password);
+
+        var exception = await useCase.Execute(request).ShouldThrowAsync<ErrorOnValidationException>();
+
+        exception.GetErrors().ShouldSatisfy([
+            e => e.Count.ShouldBe(1),
+            e => e.ShouldContain(ResourceMessagesException.VALIDATION_PASSWORD_REQUIRED)
+        ]);
     }
 
     [Fact]
@@ -32,7 +52,7 @@ public class ChangePasswordUseCaseTest
         var (user, _) = UserBuilder.Build();
 
         var request = RequestChangePasswordJsonBuilder.Build();
-        var useCase = CreateUseCase(user);
+        var useCase = CreateUseCase(user, "invalid-password");
 
         var exception = await useCase.Execute(request).ShouldThrowAsync<InvalidCredentialsException>();
 
@@ -43,14 +63,13 @@ public class ChangePasswordUseCaseTest
     }
 
 
-    private static ChangePasswordUseCase CreateUseCase(WorkTree.Domain.Entities.User user, string? password = null)
+    private static ChangePasswordUseCase CreateUseCase(WorkTree.Domain.Entities.User user, string password)
     {
-        var passwordHasher = new PasswordHasherBuilder();
+        ;
         var loggedUser = LoggedUserBuilder.Build(user);
         var updateOnlyRepository = UserUpdateOnlyRepositoryBuilder.Build();
 
-        if (password is not null)
-            passwordHasher.VerifyPassword(password);
+        var passwordHasher = new PasswordHasherBuilder().VerifyPassword(password);
 
 
         return new ChangePasswordUseCase(loggedUser, passwordHasher.Build(), updateOnlyRepository);
