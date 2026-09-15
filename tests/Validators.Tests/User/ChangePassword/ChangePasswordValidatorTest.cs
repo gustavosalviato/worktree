@@ -37,10 +37,17 @@ public class ChangePasswordValidatorTest
         ]);
     }
 
-    [Fact]
-    public void Validation_ShouldHaveError_WhenNewPasswordIsTooShort()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
+    public void Validation_ShouldHaveError_WhenNewPasswordIsTooShort(int passwordLength)
     {
-        var request = RequestChangePasswordJsonBuilder.Build();
+        var request = RequestChangePasswordJsonBuilder.Build(passwordLength);
 
         request.NewPassword = request.NewPassword[..5];
 

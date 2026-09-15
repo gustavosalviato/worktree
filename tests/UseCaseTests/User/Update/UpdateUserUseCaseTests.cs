@@ -41,6 +41,8 @@ public class UpdateUserUseCaseTests
             e => e.Count.ShouldBe(1),
             e => e.ShouldContain(ResourceMessagesException.VALIDATION_NAME_REQUIRED)
         ]);
+        
+        user.Name.ShouldNotBe(request.Name);
     }
 
 
