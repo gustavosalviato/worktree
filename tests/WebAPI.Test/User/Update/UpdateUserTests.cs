@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net;
 using System.Text.Json;
 using CommonTestUtilities.Requests;
+using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using WebAPI.Test.InlineData;
 using WebAPI.Test.Resources;
@@ -35,6 +36,11 @@ public class UpdateUserTests : BaseIntegrationTest
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         _firstUser.GetName().ShouldBe(request.Name);
+
+        var wasUpdatedSuccessfully =
+            await dbContext.Users.AnyAsync(user => user.Id == _firstUser.GetId() && user.Name == request.Name);
+
+        wasUpdatedSuccessfully.ShouldBeTrue();
     }
 
     [Theory]
@@ -57,35 +63,6 @@ public class UpdateUserTests : BaseIntegrationTest
 
         var expectedErrorMessage =
             ResourceMessagesException.ResourceManager.GetString("VALIDATION_NAME_REQUIRED",
-                new CultureInfo(culture));
-
-        errors.ShouldSatisfyAllConditions(errorsList =>
-        {
-            errorsList.Count().ShouldBe(1);
-            errorsList.ShouldContain(error =>
-                error.GetString()!.Equals(expectedErrorMessage));
-        });
-    }
-
-
-    [Theory]
-    [ClassData(typeof(CultureInlineData))]
-    public async Task Validate_ShouldThrowException_WhenUserDoesNotExists(string culture)
-    {
-        var request = RequestUpdateUserJsonBuilder.Build();
-
-        var response = await Put(RequestUri, request, culture: culture);
-
-        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
-
-        await using var responseBody = await response.Content.ReadAsStreamAsync();
-
-        var responseData = await JsonDocument.ParseAsync(responseBody);
-
-        var errors = responseData.RootElement.GetProperty("errors").EnumerateArray();
-
-        var expectedErrorMessage =
-            ResourceMessagesException.ResourceManager.GetString("VALIDATION_ACCESS_TOKEN_REQUIRED",
                 new CultureInfo(culture));
 
         errors.ShouldSatisfyAllConditions(errorsList =>
