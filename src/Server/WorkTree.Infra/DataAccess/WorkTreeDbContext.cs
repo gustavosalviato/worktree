@@ -13,5 +13,4 @@ internal class WorkTreeDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Tenant> Tenants { get; set; }
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
 }

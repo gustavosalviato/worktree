@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WorkTree.Domain.Identity;
 using WorkTree.Domain.Repositories;
-using WorkTree.Domain.Repositories.RefreshToken;
 using WorkTree.Domain.Repositories.Tenant;
 using WorkTree.Domain.Repositories.User;
 using WorkTree.Domain.Security.PasswordHashing;
@@ -42,9 +41,7 @@ public static class DependencyInjectionExtension
 
             services.AddScoped<ITenantWriteOnlyRepository, TenantRepository>();
             services.AddScoped<ITenantReadOnlyRepository, TenantRepository>();
-
-            services.AddScoped<IRefreshTokenWriteOnlyRepository, RefreshTokenRepository>();
-
+            
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
