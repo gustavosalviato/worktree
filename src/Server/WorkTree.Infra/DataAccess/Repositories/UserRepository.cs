@@ -40,9 +40,9 @@ internal sealed class UserRepository : IUserWriteOnlyRepository, IUserReadOnlyRe
         return await _context.Users.AnyAsync(u => u.Id == id);
     }
 
-    public async Task<List<User>> FindManyAsync()
+    public async Task<List<User>> FindManyByTenantIdAsync(Guid tenantId)
     {
-        var users = await _context.Users.ToListAsync();
+        var users = await _context.Users.AsNoTracking().Where(u => u.TenantId == tenantId).ToListAsync();
 
         return users;
     }

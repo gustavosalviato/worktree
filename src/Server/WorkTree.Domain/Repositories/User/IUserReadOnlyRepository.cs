@@ -5,5 +5,5 @@ public interface IUserReadOnlyRepository
     Task<Entities.User?> FindByEmailAsync(string email);
     Task<Entities.User?> FindByIdAsync(Guid id);
     Task<bool> FindAnyByIdAsync(Guid id);
-    Task<List<Entities.User>> FindManyAsync();
+    Task<List<Entities.User>> FindManyByTenantIdAsync(Guid tenantId);
 }

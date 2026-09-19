@@ -29,8 +29,8 @@ public class UsersController : Controller
         return Created(string.Empty, response);
     }
 
-    [HttpPut("profile")]
     [Authorize]
+    [HttpPut("profile")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromBody] RequestUpdateUserJson request,
@@ -53,8 +53,8 @@ public class UsersController : Controller
         return Ok();
     }
 
-    [HttpGet("profile")]
     [Authorize]
+    [HttpGet("profile")]
     [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetById([FromRoute] Guid userId, [FromServices] IGetUserByIdUseCase useCase)
     {
@@ -63,6 +63,7 @@ public class UsersController : Controller
         return Ok(response);
     }
 
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(List<ResponseUserJson>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status204NoContent)]
@@ -76,8 +77,8 @@ public class UsersController : Controller
         return Ok(users);
     }
 
-    [HttpPut("password")]
     [Authorize]
+    [HttpPut("password")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromBody] RequestChangePasswordJson request,

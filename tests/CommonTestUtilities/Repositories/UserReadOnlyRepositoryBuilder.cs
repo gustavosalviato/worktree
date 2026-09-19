@@ -19,5 +19,11 @@ public class UserReadOnlyRepositoryBuilder
             .ReturnsAsync(user);
     }
 
+    public void FindManyByTenantIdAsync(Guid tenantId, List<User> users)
+    {
+        _mock.Setup(repository => repository.FindManyByTenantIdAsync(tenantId))
+            .ReturnsAsync(users);
+    }
+
     public IUserReadOnlyRepository Build() => _mock.Object;
 }
