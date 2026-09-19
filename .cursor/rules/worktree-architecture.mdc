@@ -1,0 +1,31 @@
+---
+description: Camadas, dependências e fluxo de features no WorkTree
+alwaysApply: true
+---
+
+# Arquitetura WorkTree
+
+## Projetos e dependências
+
+| Projeto | Pode referenciar | Não pode |
+|---------|------------------|----------|
+| `WorkTree.Domain` | (nenhum) | ASP.NET, EF, FluentValidation, Infra, API |
+| `WorkTree.Communication` | (mínimo; DTOs) | Application, Infra, lógica de negócio |
+| `WorkTree.Exceptions` | recursos/mensagens | camadas de app |
+| `WorkTree.Application` | Domain, Communication, Exceptions | Infra, EF, ASP.NET |
+| `WorkTree.Infra` | Domain | Application, API, controllers |
+| `WorkTree.API` | Application, Infra, Communication, Exceptions | regra de negócio pesada no controller |
+
+## Fluxo para nova capacidade HTTP
+
+1. Request/response em `WorkTree.Communication`
+2. `I*UseCase` + implementação + validator em `WorkTree.Application/UseCases/...`
+3. Interfaces de repositório/serviço em `WorkTree.Domain` (se ainda não existirem)
+4. Implementação + DI em `WorkTree.Infra`
+5. Action em controller + `ProducesResponseType`
+6. Testes: `Validators.Tests`, `UseCaseTests`, `WebAPI.Test` (quando houver endpoint)
+
+## Mensagens e erros
+
+- Textos de validação/erro: `ResourceMessagesException` (`WorkTree.Exceptions`); reutilizar chave existente antes de criar nova
+- Falhas de domínio/aplicação: exceções em `WorkTree.Exceptions.ExceptionsBase` (`ExceptionBase` → `ExceptionFilter` na API)

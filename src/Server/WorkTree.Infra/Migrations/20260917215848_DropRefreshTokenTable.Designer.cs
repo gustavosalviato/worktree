@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WorkTree.Infra.DataAccess;
@@ -11,9 +12,11 @@ using WorkTree.Infra.DataAccess;
 namespace WorkTree.Infra.Migrations
 {
     [DbContext(typeof(WorkTreeDbContext))]
-    partial class WorkTreeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260917215848_DropRefreshTokenTable")]
+    partial class DropRefreshTokenTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
