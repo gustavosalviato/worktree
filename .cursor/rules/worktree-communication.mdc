@@ -1,0 +1,12 @@
+---
+description: Contratos HTTP request/response
+globs: src/Shared/WorkTree.Communication/**
+alwaysApply: false
+---
+
+# WorkTree.Communication
+
+- Apenas DTOs de entrada/saída (`Requests/`, `Responses/`), sem lógica de negócio
+- Nomenclatura alinhada ao projeto: `Request*Json`, `Response*Json` (por aggregate/pasta, ex. `Requests/Users/`)
+- Propriedades públicas para serialização JSON; nullable conforme padrão dos DTOs existentes
+- Não referenciar Application, Domain entities ou Infra

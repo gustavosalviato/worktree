@@ -1,0 +1,13 @@
+---
+description: EF, repositórios, segurança e DI da Infra
+globs: src/Server/WorkTree.Infra/**
+alwaysApply: false
+---
+
+# WorkTree.Infra
+
+- Implementações de interfaces do Domain em `DataAccess/Repositories/`, `Identity/`, `Security/`
+- `WorkTreeDbContext` e configurações EF apenas aqui
+- Alteração de modelo persistente: adicionar migration em `Migrations/` (ferramentas EF do projeto API)
+- Registrar implementações em `DependencyInjectionExtension` (`AddRepositories`, `AddTokensHandlers`, `AddDbContext`, etc.)
+- Não expor tipos de Infra para Application ou API; Application só vê interfaces do Domain

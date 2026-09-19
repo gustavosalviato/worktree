@@ -1,0 +1,13 @@
+---
+description: Entidades e contratos do domínio
+globs: src/Server/WorkTree.Domain/**
+alwaysApply: false
+---
+
+# WorkTree.Domain
+
+- Entidades em `Entities/`; comportamento relevante nos métodos da entidade (ex.: `Update`, `ChangePassword`)
+- Repositórios: interfaces segmentadas (`I*ReadOnlyRepository`, `I*WriteOnlyRepository`, `I*UpdateOnlyRepository`) em `Repositories/{Aggregate}/`
+- `IUnitOfWork` para commit transacional
+- Abstrações cross-cutting: `Identity/ILoggedUser`, `Security/*` (hash, tokens) — só contratos, sem implementação
+- Projeto sem pacotes de infraestrutura; manter `WorkTree.Domain.csproj` sem referências a outros projetos da solução

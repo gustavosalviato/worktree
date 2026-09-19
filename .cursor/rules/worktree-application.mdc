@@ -1,0 +1,26 @@
+---
+description: Use cases, validators e DI da Application
+globs: src/Server/WorkTree.Application/**
+alwaysApply: false
+---
+
+# WorkTree.Application
+
+## Estrutura por caso de uso
+
+Pasta `UseCases/{Aggregate}/{Action}/` contendo:
+
+- `I{Action}UseCase` com `Execute(...)` (retorno `Task` ou `Task<TResponse>`)
+- `{Action}UseCase` injetando apenas abstrações do **Domain** (repositórios, `IUnitOfWork`, `ILoggedUser`, `IPasswordHasher`, tokens, etc.)
+- Validator FluentValidation para o request (`*Validator` / `Request*Validator`, alinhado aos vizinhos da mesma pasta)
+
+## Comportamento
+
+- Validar no use case (`ValidateAndThrowOnFailures` → `ErrorOnValidationException` com mensagens de `ResourceMessagesException`)
+- Persistência: alterar entidade via métodos de domínio quando existirem; `CommitAsync` no `IUnitOfWork`
+- Mapeamento entity/DTO: Mapster quando já usado no fluxo equivalente
+- Registrar todo use case novo em `DependencyInjectionExtension.AddUseCases()` (`AddScoped<I*, *>`)
+
+## Proibido
+
+- Referenciar `WorkTree.Infra`, EF Core ou tipos de ASP.NET
