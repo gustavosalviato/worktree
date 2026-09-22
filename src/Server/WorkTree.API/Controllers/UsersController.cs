@@ -3,7 +3,6 @@ using WorkTree.Communication.Responses;
 using Microsoft.AspNetCore.Mvc;
 using WorkTree.Application.UseCases.User.ChangePassword;
 using WorkTree.Application.UseCases.User.Create;
-using WorkTree.Application.UseCases.User.Delete;
 using WorkTree.Application.UseCases.User.GetAll;
 using WorkTree.Application.UseCases.User.GetById;
 using WorkTree.Application.UseCases.User.Update;
@@ -40,19 +39,7 @@ public class UsersController : Controller
 
         return NoContent();
     }
-
-
-    [HttpDelete]
-    [Route("{userId}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete([FromRoute] Guid userId, [FromServices] IDeleteUserUseCase useCase)
-    {
-        await useCase.Execute(userId);
-
-        return Ok();
-    }
-
+    
     [Authorize]
     [HttpGet("profile")]
     [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status200OK)]
