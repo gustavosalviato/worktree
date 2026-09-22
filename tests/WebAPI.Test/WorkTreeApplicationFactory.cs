@@ -77,7 +77,7 @@ public class WorkTreeApplicationFactory : WebApplicationFactory<Program>, IAsync
         return (user, password, accessToken, invalidToken);
     }
 
-    private async Task<Tenant> SeedTenant()
+    private async Task<WorkTree.Domain.Entities.Tenant> SeedTenant()
     {
         await using var scope = Services.CreateAsyncScope();
 
