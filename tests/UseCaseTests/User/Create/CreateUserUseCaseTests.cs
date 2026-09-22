@@ -90,7 +90,7 @@ public class CreateUserUseCaseTests
     private static CreateUserUseCase CreateUseCase
     (
         WorkTree.Domain.Entities.User? user = null,
-        Tenant? tenant = null
+        WorkTree.Domain.Entities.Tenant? tenant = null
     )
     {
         var unitOfWork = UnitOfWorkBuilder.Build();

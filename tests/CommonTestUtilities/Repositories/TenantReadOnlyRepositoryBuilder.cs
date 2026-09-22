@@ -18,5 +18,10 @@ public class TenantReadOnlyRepositoryBuilder
         _mock.Setup(repository => repository.FindByIdAsync(tenant.Id)).ReturnsAsync(tenant);
     }
 
+    public void FindByEmailAsync(Tenant tenant)
+    {
+        _mock.Setup(repository => repository.FindByEmailAsync(tenant.Email)).ReturnsAsync(tenant);
+    }
+
     public ITenantReadOnlyRepository Build() => _mock.Object;
 }
