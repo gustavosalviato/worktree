@@ -18,7 +18,7 @@ public class TenantsController : Controller
     [ProducesResponseType(typeof(ResponseTenantJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Register([FromBody] RequestTenantJson request,
+    public async Task<IActionResult> Register([FromBody] RequestCreateTenantJson request,
         [FromServices] ICreateTenantUseCase useCase)
     {
         var response = await useCase.Execute(request);

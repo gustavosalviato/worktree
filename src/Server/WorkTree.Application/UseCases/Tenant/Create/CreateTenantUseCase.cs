@@ -22,7 +22,7 @@ public class CreateTenantUseCase : ICreateTenantUseCase
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<ResponseTenantJson> Execute(RequestTenantJson request)
+    public async Task<ResponseTenantJson> Execute(RequestCreateTenantJson request)
     {
         await ValidateAndThrowFailure(request);
 
@@ -41,7 +41,7 @@ public class CreateTenantUseCase : ICreateTenantUseCase
     }
 
 
-    private async Task ValidateAndThrowFailure(RequestTenantJson request)
+    private async Task ValidateAndThrowFailure(RequestCreateTenantJson request)
     {
         var validator = new RequestTenantValidator();
 

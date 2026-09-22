@@ -4,7 +4,7 @@ using WorkTree.Exceptions;
 
 namespace WorkTree.Application.UseCases.Tenant.Create;
 
-public class RequestTenantValidator : AbstractValidator<RequestTenantJson>
+public class RequestTenantValidator : AbstractValidator<RequestCreateTenantJson>
 {
     public RequestTenantValidator()
     {

@@ -5,5 +5,5 @@ namespace WorkTree.Application.UseCases.Tenant.Create;
 
 public interface ICreateTenantUseCase
 {
-    Task<ResponseTenantJson> Execute(RequestTenantJson request);
+    Task<ResponseTenantJson> Execute(RequestCreateTenantJson requestCreate);
 }
