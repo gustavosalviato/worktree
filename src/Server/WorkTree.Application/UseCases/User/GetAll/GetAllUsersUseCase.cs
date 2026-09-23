@@ -1,23 +1,25 @@
 using WorkTree.Communication.Responses.Users;
+using WorkTree.Domain.Identity;
 using WorkTree.Domain.Repositories.User;
 
 namespace WorkTree.Application.UseCases.User.GetAll;
 
 public class GetAllUsersUseCase : IGetAllUsersUseCase
 {
-    private readonly IUserWriteOnlyRepository _userWriteOnlyRepository;
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
+    private readonly ILoggedUser _loggedUser;
 
-    public GetAllUsersUseCase(IUserWriteOnlyRepository userWriteOnlyRepository,
-        IUserReadOnlyRepository userReadOnlyRepository)
+    public GetAllUsersUseCase(IUserReadOnlyRepository userReadOnlyRepository, ILoggedUser loggedUser)
     {
-        _userWriteOnlyRepository = userWriteOnlyRepository;
         _userReadOnlyRepository = userReadOnlyRepository;
+        _loggedUser = loggedUser;
     }
 
     public async Task<List<ResponseUserJson>> Execute()
     {
-        var users = await _userReadOnlyRepository.FindManyAsync();
+        var loggedUser = await _loggedUser.Get();
+
+        var users = await _userReadOnlyRepository.FindManyByTenantIdAsync(loggedUser.TenantId);
 
         return users.Select(user => new ResponseUserJson
         {

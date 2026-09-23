@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkTree.Application.UseCases.Tenant.Create;
 using WorkTree.Application.UseCases.Tenant.Delete;
@@ -18,7 +19,7 @@ public class TenantsController : Controller
     [ProducesResponseType(typeof(ResponseTenantJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Register([FromBody] RequestTenantJson request,
+    public async Task<IActionResult> Register([FromBody] RequestCreateTenantJson request,
         [FromServices] ICreateTenantUseCase useCase)
     {
         var response = await useCase.Execute(request);
@@ -26,15 +27,15 @@ public class TenantsController : Controller
         return Created(string.Empty, response);
     }
 
+    [Authorize]
     [HttpPut]
-    [Route("{tenantId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Update([FromRoute] Guid tenantId, [FromBody] RequestUpdateTenantJson request,
+    public async Task<IActionResult> Update([FromBody] RequestUpdateTenantJson request,
         [FromServices] IUpdateTenantUseCase useCase)
     {
-        await useCase.Execute(tenantId, request);
+        await useCase.Execute(request);
 
         return NoContent();
     }

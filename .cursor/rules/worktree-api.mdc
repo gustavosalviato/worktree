@@ -1,0 +1,14 @@
+---
+description: Controllers e superfície HTTP do WorkTree.API
+globs: src/Server/WorkTree.API/**
+alwaysApply: false
+---
+
+# WorkTree.API
+
+- Controllers finos: receber DTO, resolver `I*UseCase` via `[FromServices]`, chamar `Execute`, retornar status/ body adequados
+- Sem regra de negócio, sem `DbContext`, sem acesso direto a repositórios
+- Documentar respostas com `[ProducesResponseType]` (incluir `ResponseErrorMessagesJson` quando aplicável)
+- Erros de use case: não envolver em try/catch genérico; confiar em `ExceptionFilter` para `ExceptionBase`
+- Autenticação: `[Authorize]` onde o use case depende de `ILoggedUser`
+- Rotas: seguir padrão existente (`api/[controller]`, verbos HTTP já usados no projeto)

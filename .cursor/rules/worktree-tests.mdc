@@ -1,0 +1,18 @@
+---
+description: Testes unitários e de integração WorkTree
+globs: tests/**
+alwaysApply: false
+---
+
+# Testes
+
+| Projeto | Quando adicionar |
+|---------|------------------|
+| `Validators.Tests` | Novo ou alterado validator FluentValidation |
+| `UseCaseTests` | Novo ou alterado use case (sucesso + falhas relevantes) |
+| `WebAPI.Test` | Novo endpoint ou mudança de contrato/status HTTP |
+| `CommonTestUtilities` | Builders/repositories fake reutilizados por mais de um teste |
+
+- Use case: `Shouldly`, builders em `CommonTestUtilities`, mocks de repositório quando o projeto já usa esse padrão
+- Integração: estender `BaseIntegrationTest` / `WorkTreeApplicationFactory` como nos testes de `User/` existentes
+- Asserções de mensagem: comparar com `ResourceMessagesException` quando o use case valida texto

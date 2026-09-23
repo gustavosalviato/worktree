@@ -65,7 +65,7 @@ public class ChangePasswordUseCaseTest
 
     private static ChangePasswordUseCase CreateUseCase(WorkTree.Domain.Entities.User user, string password)
     {
-        ;
+        
         var loggedUser = LoggedUserBuilder.Build(user);
         var updateOnlyRepository = UserUpdateOnlyRepositoryBuilder.Build();
 

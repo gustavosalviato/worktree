@@ -3,7 +3,6 @@ using WorkTree.Communication.Responses;
 using Microsoft.AspNetCore.Mvc;
 using WorkTree.Application.UseCases.User.ChangePassword;
 using WorkTree.Application.UseCases.User.Create;
-using WorkTree.Application.UseCases.User.Delete;
 using WorkTree.Application.UseCases.User.GetAll;
 using WorkTree.Application.UseCases.User.GetById;
 using WorkTree.Application.UseCases.User.Update;
@@ -29,8 +28,8 @@ public class UsersController : Controller
         return Created(string.Empty, response);
     }
 
-    [HttpPut("profile")]
     [Authorize]
+    [HttpPut("profile")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromBody] RequestUpdateUserJson request,
@@ -40,21 +39,9 @@ public class UsersController : Controller
 
         return NoContent();
     }
-
-
-    [HttpDelete]
-    [Route("{userId}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete([FromRoute] Guid userId, [FromServices] IDeleteUserUseCase useCase)
-    {
-        await useCase.Execute(userId);
-
-        return Ok();
-    }
-
-    [HttpGet("profile")]
+    
     [Authorize]
+    [HttpGet("profile")]
     [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetById([FromRoute] Guid userId, [FromServices] IGetUserByIdUseCase useCase)
     {
@@ -63,6 +50,7 @@ public class UsersController : Controller
         return Ok(response);
     }
 
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(List<ResponseUserJson>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status204NoContent)]
@@ -76,8 +64,8 @@ public class UsersController : Controller
         return Ok(users);
     }
 
-    [HttpPut("password")]
     [Authorize]
+    [HttpPut("password")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromBody] RequestChangePasswordJson request,
