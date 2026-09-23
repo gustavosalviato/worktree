@@ -4,5 +4,5 @@ namespace WorkTree.Application.UseCases.Tenant.Update;
 
 public interface IUpdateTenantUseCase
 {
-    Task Execute(Guid tenantId, RequestUpdateTenantJson request);
+    Task Execute(RequestUpdateTenantJson request);
 }

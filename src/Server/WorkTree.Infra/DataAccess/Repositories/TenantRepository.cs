@@ -4,7 +4,8 @@ using WorkTree.Domain.Repositories.Tenant;
 
 namespace WorkTree.Infra.DataAccess.Repositories;
 
-internal sealed class TenantRepository : ITenantWriteOnlyRepository, ITenantReadOnlyRepository
+internal sealed class TenantRepository : ITenantWriteOnlyRepository, ITenantReadOnlyRepository,
+    ITenantUpdateOnlyRepository
 {
     private readonly WorkTreeDbContext _context;
 
@@ -17,7 +18,9 @@ internal sealed class TenantRepository : ITenantWriteOnlyRepository, ITenantRead
 
     public void Update(Tenant tenant)
     {
-        _context.Tenants.Update(tenant);
+        _context.Tenants.Attach(tenant);
+
+        _context.Entry(tenant).Property(t => t.Name).IsModified = true;
     }
 
     public void Delete(Tenant tenant)
@@ -27,7 +30,7 @@ internal sealed class TenantRepository : ITenantWriteOnlyRepository, ITenantRead
 
     public async Task<Tenant?> FindByIdAsync(Guid id)
     {
-        var tenant = await _context.Tenants.FirstOrDefaultAsync(u => u.Id == id);
+        var tenant = await _context.Tenants.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
 
         return tenant;
     }

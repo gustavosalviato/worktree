@@ -1,4 +1,5 @@
 using WorkTree.Communication.Requests;
+using WorkTree.Domain.Identity;
 using WorkTree.Domain.Repositories;
 using WorkTree.Domain.Repositories.Tenant;
 using WorkTree.Exceptions;
@@ -8,30 +9,39 @@ namespace WorkTree.Application.UseCases.Tenant.Update;
 
 public class UpdateTenantUseCase : IUpdateTenantUseCase
 {
-    private readonly ITenantWriteOnlyRepository _tenantWriteOnlyRepository;
+    private readonly ITenantUpdateOnlyRepository _tenantUpdateOnlyRepository;
     private readonly ITenantReadOnlyRepository _tenantReadOnlyRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILoggedUser _loggedUser;
 
-    public UpdateTenantUseCase(ITenantWriteOnlyRepository tenantWriteOnlyRepository,
-        ITenantReadOnlyRepository tenantReadOnlyRepository, IUnitOfWork unitOfWork)
+    public UpdateTenantUseCase
+    (
+        ITenantUpdateOnlyRepository tenantUpdateOnlyRepository,
+        ITenantReadOnlyRepository tenantReadOnlyRepository,
+        ILoggedUser loggedUser,
+        IUnitOfWork unitOfWork
+    )
     {
-        _tenantWriteOnlyRepository = tenantWriteOnlyRepository;
+        _tenantUpdateOnlyRepository = tenantUpdateOnlyRepository;
         _tenantReadOnlyRepository = tenantReadOnlyRepository;
         _unitOfWork = unitOfWork;
+        _loggedUser = loggedUser;
     }
 
-    public async Task Execute(Guid tenantId, RequestUpdateTenantJson request)
+    public async Task Execute(RequestUpdateTenantJson request)
     {
         Validate(request);
 
-        var tenant = await _tenantReadOnlyRepository.FindByIdAsync(tenantId);
+        var user = await _loggedUser.Get();
+
+        var tenant = await _tenantReadOnlyRepository.FindByIdAsync(user.TenantId);
 
         if (tenant is null)
             throw new NotFoundErrorException(ResourceMessagesException.ORGANIZATION_NOT_FOUND);
 
         tenant.Update(request.Name);
 
-        _tenantWriteOnlyRepository.Update(tenant);
+        _tenantUpdateOnlyRepository.Update(tenant);
 
         await _unitOfWork.CommitAsync();
     }
